@@ -1,6 +1,6 @@
 # README #
 
-This is the authoring server for Cloudsim
+This is the authoring server for Cloudsim and other web apps
 
 ### What is this repository for? ###
 
@@ -10,7 +10,7 @@ This is the authoring server for Cloudsim
 
 ### How do I get set up? ###
 
-* npm install 
+* npm install
 * gulp
 * Dependencies: nodejs 4 and above, gulp (sudo npm install gulp -g)
 * Database configuration: Redis for now

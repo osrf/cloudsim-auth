@@ -2,7 +2,7 @@
 
 let fs = require('fs')
 let cors = require('cors')
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5050
 
 // ssl and https
 let https = require('https')
@@ -41,6 +41,11 @@ let user = new ConnectRoles({
 })
 */
 
+const corsOptions = {
+  origin: 'https://localhost:5000'
+}
+
+app.use(cors(corsOptions))
 app.use(passport.initialize())
 // Use the BasicStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -66,7 +71,6 @@ app.get('/about', function(req, res) {
 app.get('/logout', function(req, res){
   req.logout()
   res.statusCode = 401
-  res.redirect('/')
 });
 
 app.post('/register', UserRoutes.register)

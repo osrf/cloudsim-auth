@@ -10,9 +10,11 @@ This is the authoring server for Cloudsim and other web apps
 
 ### How do I get set up? ###
 
+* Dependencies: nodejs 4 and above, gulp (sudo npm install gulp -g)
+  `sudo apt-get install -y nodejs npm nodejs-legacy redis-server`
+
 * npm install
 * gulp
-* Dependencies: nodejs 4 and above, gulp (sudo npm install gulp -g)
 * Database configuration: Redis for now
 * How to run tests
 * Deployment instructions

@@ -1,15 +1,15 @@
 {
-  "name": "gulp-expressjs-nodemon-browser-sync",
-  "version": "0.0.0",
+  "name": "cloudloop-auth",
+  "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
-    "name": "Hafiz Ismail",
-    "email": "hafiz@wehavefaces.net",
-    "url": "http://wehavefaces.net"
+    "name": "hugomatic",
+    "email": "hugo@osrfoundation.org",
+    "url": "http://osrfoundation.org"
   },
   "license": "ISC",
   "dependencies": {

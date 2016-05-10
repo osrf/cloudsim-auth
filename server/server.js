@@ -2,7 +2,7 @@
 
 let fs = require('fs')
 let cors = require('cors')
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5050
 
 // ssl and https
 let https = require('https')
@@ -41,6 +41,12 @@ let user = new ConnectRoles({
 })
 */
 
+const corsOptions = {
+  origin: 'https://localhost:5000',
+  credentials: true
+}
+
+app.use(cors(corsOptions))
 app.use(passport.initialize())
 // Use the BasicStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -66,22 +72,52 @@ app.get('/about', function(req, res) {
 app.get('/logout', function(req, res){
   req.logout()
   res.statusCode = 401
-  res.redirect('/')
+//  res.redirect('/')
+  res.end()
 });
 
 app.post('/register', UserRoutes.register)
 app.post('/unregister', UserRoutes.unregister)
 
 app.get('/admin',
-        passport.authenticate('basic', {session:false}),
-        // user.can('access admin page'),
-        function (req,res) {
-          let s = `
-            <h1>Admin page</h1>
-            Your user name is: ${req.user}
-          ` + req.user
-          res.end(s);
+  passport.authenticate('basic', {session:false}),
+  // user.can('access admin page'),
+  function (req,res) {
+    let s = `
+      <h1>Admin page</h1>
+      Your user name is: ${req.user}
+    ` + req.user
+    res.end(s);
 })
+
+app.get('/login',
+  passport.authenticate('basic', {session:false}),
+  // user.can('access admin page'),
+  function (req,res) {
+    let s = `
+      {
+        "user": "${req.user}",
+        "login": "success"
+      }`
+    res.end(s)
+})
+
+app.get('/token',
+  passport.authenticate('basic', {session:false}),
+  // user.can('access admin page')
+  function (req,res) {
+    console.log('user: ' + req.user)
+    console.log('body: ' + JSON.stringify(req.body))
+    console.log('params: ' + JSON.stringify(req.params))
+    console.log('query: ' + JSON.stringify(req.query))
+    let s = `
+      {
+        "user": "${req.user}",
+        "token": "12345"
+      }`
+    res.end(s)
+})
+
 
 console.log('listening on port ' + port)
 console.log( 'serving from: ' + __dirname)

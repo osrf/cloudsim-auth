@@ -25,6 +25,9 @@ let bodyParser = require('body-parser')
 let UserRoutes = require('./user/routes')
 let UserDb = require('./user/model')
 
+let child_process = require('child_process')
+
+
 /*
 // Passport authentication
 let user = new ConnectRoles({
@@ -41,8 +44,13 @@ let user = new ConnectRoles({
 })
 */
 
+
+
+// Here we get the public ip of this computer, and allow it as an origin
+const hostIp  = child_process.execSync(
+                'curl checkip.amazonaws.com').toString().trim()
 const corsOptions = {
-  origin: 'https://localhost:5000',
+  origin: ['https://localhost:5000', 'https://' + hostIp + ':5000'],
   credentials: true
 }
 

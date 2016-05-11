@@ -14,7 +14,7 @@ exports.verify = function(username, password, done)
 {
     console.log('verify ' + username + ' ' + password);
     process.nextTick(function () {
-      
+
         // Find the user by username.  If there is no user with the given
         // username, or the password is not correct, set the user to `false` to
         // indicate failure.  Otherwise, return the authenticated `user`.
@@ -36,22 +36,21 @@ exports.verify = function(username, password, done)
 
 exports.register = function(req, res)
 {
-    var data = util.inspect(req.body);
-    console.log("Register " + data);
+    console.log('register user\n\n')
+    var data = util.inspect(req.body)
+    console.log(" data: " + data);
     var username = req.body.user
     User.getByName(username, function(err, user){
 
         if (err)
         {
             res.jsonp({"success": false, "error": err});
-            return
         }
         if(user)
         {
-            var e = "User \"" + username  + "\" already exists";
-            console.log(e);
-            res.jsonp({ "success": false, "error": e});
-            return;
+            var e = "User \"" + username  + "\" already exists"
+            console.log(e)
+            res.jsonp({ "success": false, "error": e})
         }
         else // the user does not exist
         {
@@ -60,14 +59,16 @@ exports.register = function(req, res)
                 if(err)
                 {
                     console.error('User add error: ' + err)
-                    res.jsonp({"success": false, "error": err});
-                    return
+                    res.jsonp({"success": false, "error": err})
                 }
-                res.jsonp({"success": true, "user": user.username });
-                return
-            });
+                else {
+                  const r = {"success": true, "user": user.username }
+                  console.log('register: ' + r)
+                  res.jsonp(r)
+               }
+            })
         }
-   });
+   })
 }
 
 exports.unregister = function(req, res) {

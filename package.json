@@ -14,8 +14,11 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",
+    "browser-sync": "^1.9.2",
     "cors": "^2.7.1",
     "express": "^4.8.2",
+    "gulp": "^3.9.1",
+    "gulp-nodemon": "^1.0.5",
     "morgan": "^1.7.0",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",

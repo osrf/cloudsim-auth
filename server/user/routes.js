@@ -71,6 +71,40 @@ exports.register = function(req, res)
    })
 }
 
+let grant = {
+  verify: (tok)=>{
+    console.log('\ngrant verify ' + tok)
+    return true
+  }
+}
+
+exports.exists = function(req, res) {
+  console.log('user exists route')
+  const token = req.body.token
+  if (!grant.verify(token)) {
+    res.jsonp({"success": false, "error": "Unauthorized"})
+    return
+  }
+
+  const  username = req.body.user
+  if (!username) {
+    res.jsonp({success: false, error: "no user specified"})
+    return
+  }
+
+  User.getByName(username, function(err, user){
+    if (err) {
+      res.jsonp({success: false, error: err})
+      return
+    }
+    if (user) {
+      res.jsonp({success: true, userExists: true})
+      return
+    }
+    res.jsonp({success: true, userExists: false})
+  })
+}
+
 exports.unregister = function(req, res) {
     let data = util.inspect(req.body)
     console.log("unregister " + data)

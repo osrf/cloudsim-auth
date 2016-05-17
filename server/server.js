@@ -2,7 +2,7 @@
 
 let fs = require('fs')
 let cors = require('cors')
-const port = process.env.PORT || 5050
+const dotenv = require('dotenv')
 
 // ssl and https
 let https = require('https')
@@ -27,6 +27,9 @@ let UserDb = require('./user/model')
 
 let child_process = require('child_process')
 
+dotenv.load()
+
+const port = process.env.PORT || 5050
 
 /*
 // Passport authentication
@@ -86,6 +89,8 @@ app.get('/logout', function(req, res){
 
 app.post('/register', UserRoutes.register)
 app.post('/unregister', UserRoutes.unregister)
+
+app.get('/exists', UserRoutes.exists)
 
 app.get('/admin',
   passport.authenticate('basic', {session:false}),

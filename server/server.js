@@ -29,23 +29,9 @@ let child_process = require('child_process')
 
 dotenv.load()
 
-const port = process.env.PORT || 5050
+const jsgrant = require('jsgrant')
 
-/*
-// Passport authentication
-let user = new ConnectRoles({
-  failureHandler: function (req, res, action) {
-    // optional function to customise code that runs when
-    // user fails authorisation
-    var accept = req.headers.accept || '';
-    res.status(403);
-    //if (~accept.indexOf('html')) {
-    //  res.render('access-denied', {action: action});
-    //} else {
-      res.send('Access Denied - You don\'t have permission to ' + action);
-    }
-})
-*/
+const port = process.env.PORT || 5050
 
 
 
@@ -119,16 +105,19 @@ app.get('/token',
   passport.authenticate('basic', {session:false}),
   // user.can('access admin page')
   function (req,res) {
-    console.log('user: ' + req.user)
-    console.log('body: ' + JSON.stringify(req.body))
-    console.log('params: ' + JSON.stringify(req.params))
-    console.log('query: ' + JSON.stringify(req.query))
-    let s = `
-      {
-        "user": "${req.user}",
-        "token": "12345"
-      }`
-    res.end(s)
+    console.log('get a token')
+    console.log('  user: ' + JSON.stringify(req.user))
+    console.log('  raw query:' + req.query)
+    console.log('  query: ' + JSON.stringify(req.query))
+
+    let tokenData = { username: req.user.username,
+                      data:req.query,
+                      timeout: 'never' }
+
+    jsgrant.signToken(tokenData, (token) =>{
+      console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
+      res.jsonp({decoded: tokenData, success:true, token: token})
+    })
 })
 
 

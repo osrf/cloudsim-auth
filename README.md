@@ -19,6 +19,20 @@ This is the authoring server for Cloudsim and other web apps
 * How to run tests
 * Deployment instructions
 
+### Deployment ###
+
+* Install jsgrant module
+
+* Generate a private / public key pair for .env file
+
+In jsgrant directory, run:
+
+`node generate_jwt_keys.js`
+
+Put the result in a .env in the root of the project. The cloudsim-auth server
+needs both keys, but other servers (cloudsim-sim, cloudsim-portal) only need
+the public key in their .env file
+
 ### Contribution guidelines ###
 
 * Writing tests

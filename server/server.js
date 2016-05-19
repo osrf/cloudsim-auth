@@ -93,13 +93,14 @@ app.get('/login',
   // user.can('access admin page'),
   function (req,res) {
     const user = req.user.username
-    jsgrant.signToken({user}, function(token) {
+    jsgrant.signToken({user:user}, function(err, token) {
       let s =
       {
         "user": user,
         "login": "success",
         "token" : token
       }
+      console.log('login result: ' + JSON.stringify(s))
       res.jsonp(s)
     })
 })

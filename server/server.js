@@ -18,7 +18,6 @@ let express = require('express')
 let app = express()
 let router = express.Router()
 let morgan = require('morgan')
-
 let bodyParser = require('body-parser')
 
 // custom models
@@ -93,12 +92,16 @@ app.get('/login',
   passport.authenticate('basic', {session:false}),
   // user.can('access admin page'),
   function (req,res) {
-    let s = `
+    const user = req.user.username
+    jsgrant.signToken({user}, function(token) {
+      let s =
       {
-        "user": "${req.user}",
-        "login": "success"
-      }`
-    res.end(s)
+        "user": user,
+        "login": "success",
+        "token" : token
+      }
+      res.jsonp(s)
+    })
 })
 
 app.get('/token',

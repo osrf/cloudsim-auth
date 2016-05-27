@@ -28,7 +28,7 @@ let child_process = require('child_process')
 
 dotenv.load()
 
-const jsgrant = require('jsgrant')
+const csgrant = require('cloudsim-grant')
 
 const port = process.env.PORT || 5050
 
@@ -93,7 +93,7 @@ app.get('/login',
   // user.can('access admin page'),
   function (req,res) {
     const user = req.user.username
-    jsgrant.signToken({user:user}, function(err, token) {
+    csgrant.signToken({user:user}, function(err, token) {
       let s =
       {
         "user": user,
@@ -118,7 +118,7 @@ app.get('/token',
                       data:req.query,
                       timeout: 'never' }
 
-    jsgrant.signToken(tokenData, (token) =>{
+    csgrant.signToken(tokenData, (token) =>{
       console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
       res.jsonp({decoded: tokenData, success:true, token: token})
     })

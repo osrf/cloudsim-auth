@@ -84,7 +84,7 @@ app.get('/admin',
     let s = `
       <h1>Admin page</h1>
       Your user name is: ${req.user}
-    ` + req.user
+    `
     res.end(s);
 })
 

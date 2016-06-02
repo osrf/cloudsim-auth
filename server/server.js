@@ -1,17 +1,17 @@
 'use strict'
 
-let fs = require('fs')
-let cors = require('cors')
+const fs = require('fs')
+const cors = require('cors')
 const dotenv = require('dotenv')
 
 // ssl and https
-let https = require('https')
-let privateKey  = fs.readFileSync('key.pem', 'utf8')
-let certificate = fs.readFileSync('key-cert.pem', 'utf8')
+const https = require('https')
+const privateKey  = fs.readFileSync('key.pem', 'utf8')
+const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
 // authentication
-var passport = require('passport')
-var BasicStrategy = require('passport-http').BasicStrategy
+const passport = require('passport')
+const BasicStrategy = require('passport-http').BasicStrategy
 
 // simple express server
 let express = require('express')

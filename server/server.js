@@ -93,10 +93,10 @@ app.get('/login',
   // user.can('access admin page'),
   function (req,res) {
     const user = req.user.username
-    csgrant.signToken({user:user}, function(err, token) {
+    csgrant.signToken({username:user}, function(err, token) {
       let s =
       {
-        "user": user,
+        "username": user,
         "login": "success",
         "token" : token
       }

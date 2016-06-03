@@ -3,7 +3,6 @@
 const fs = require('fs')
 const cors = require('cors')
 const dotenv = require('dotenv')
-
 // ssl and https
 const https = require('https')
 const privateKey  = fs.readFileSync('key.pem', 'utf8')

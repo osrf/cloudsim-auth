@@ -13,7 +13,16 @@ var redis = require("redis").createClient();
 var exports = module.exports = {};
 
 
-let DB = 'leaderboard'
+let DB = 'cloudsim-auth'
+
+if (process.env.NODE_ENV === "test") {
+  console.log('cloudsim-auth/server/user/model.js NODE_ENV: ',
+    process.env.NODE_ENV)
+  // test mode...
+  // use the test list instead of the live one
+  DB = 'cloudsim-auth-test'
+}
+
 let usermap = DB + '/usermap'
 
 function getUserPath(id) {

@@ -89,18 +89,28 @@ app.get('/admin',
 
 app.get('/login',
   passport.authenticate('basic', {session:false}),
-  // user.can('access admin page'),
   function (req,res) {
     const user = req.user.username
+    console.log('processing login request for user ', user)
     csgrant.signToken({username:user}, function(err, token) {
-      let s =
-      {
-        "username": user,
-        "login": "success",
-        "token" : token
+      const r = {success: false,
+                 "username": user,
+                 "operation": "login"
+                }
+      if(err) {
+        r.error = err
+        // be more specific about the error
+        if (err.message)
+          r.error = err.message
+        console.log('login fail: ' + JSON.stringify(r))
+        res.jsonp(r)
+        return
       }
-      console.log('login result: ' + JSON.stringify(s))
-      res.jsonp(s)
+      r.login = "success"
+      r.token = token
+      r.success = true
+      console.log('login success: ' + JSON.stringify(r))
+      res.jsonp(r)
     })
 })
 

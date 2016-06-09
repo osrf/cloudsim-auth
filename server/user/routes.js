@@ -12,7 +12,7 @@ var exports = module.exports = {};
 //   with a user object.
 exports.verify = function(username, password, done)
 {
-    console.log('verify ' + username + ' ' + password);
+    console.log('verify ' + username)
     process.nextTick(function () {
 
         // Find the user by username.  If there is no user with the given

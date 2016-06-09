@@ -1,3 +1,4 @@
+[ ![Codeship Status for osrf/cloudsim-auth](https://codeship.com/projects/d48e5670-0c06-0134-283f-368b7d3cc702/status?branch=default)](https://codeship.com/projects/156010)
 # README #
 
 This is the authoring server for Cloudsim and other web apps

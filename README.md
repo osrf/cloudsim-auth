@@ -7,7 +7,6 @@ This is the authoring server for Cloudsim and other web apps
 
 * A web app with users
 * A json web token delivery
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
 ### How do I get set up? ###
 
@@ -22,11 +21,9 @@ This is the authoring server for Cloudsim and other web apps
 
 ### Deployment ###
 
-* Install jsgrant module
-
 * Generate a private / public key pair for .env file
 
-In jsgrant directory, run:
+In cloudsim-grant directory, run:
 
 `node generate_jwt_keys.js`
 
@@ -44,3 +41,4 @@ the public key in their .env file
 
 * Repo owner or admin: hugo@osrfoundation.org
 
+* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)

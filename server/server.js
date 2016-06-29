@@ -37,9 +37,13 @@ const port = process.env.CLOUDSIM_PORT || 4000
 const hostIp  = child_process.execSync(
                 'curl checkip.amazonaws.com').toString().trim()
 const corsOptions = {
-  origin: ['https://localhost:5000', 'https://' + hostIp + ':5000'],
+  origin: ['https://localhost:5000',
+  'https://' + hostIp + ':5000',
+  'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
   credentials: true
 }
+
+console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
 
 app.use(cors(corsOptions))
 app.use(passport.initialize())

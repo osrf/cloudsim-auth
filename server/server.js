@@ -38,6 +38,7 @@ const hostIp  = child_process.execSync(
                 'curl checkip.amazonaws.com').toString().trim()
 const corsOptions = {
   origin: [
+  'https://osrf.github.io',
   'https://cloudsim.io',
   'https://cloudsim.io:5000',
   'http://localhost:8080',

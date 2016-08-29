@@ -34,7 +34,8 @@ const port = process.env.CLOUDSIM_PORT || 4000
 const hostIp  = child_process.execSync(
                 'curl checkip.amazonaws.com').toString().trim()
 const corsOptions = {
-  origin: ['https://localhost:4000', 'https://' + hostIp + ':5000'],
+  origin: ['https://localhost:4000', 'https://localhost:5000',
+           'https://' + hostIp + ':5000'],
   credentials: true
 }
 

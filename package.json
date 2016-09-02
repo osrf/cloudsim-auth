@@ -1,5 +1,5 @@
 {
-  "name": "cloudloop-auth",
+  "name": "cloudsim-auth",
   "version": "1.0.0",
   "description": "Basic auth server for Cloudsim authentication",
   "main": "app.js",

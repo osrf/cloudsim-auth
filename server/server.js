@@ -8,20 +8,13 @@ const https = require('https')
 const privateKey  = fs.readFileSync('key.pem', 'utf8')
 const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
-// authentication
-const passport = require('passport')
-const BasicStrategy = require('passport-http').BasicStrategy
-
 // simple express server
 let express = require('express')
 let app = express()
 let router = express.Router()
 let morgan = require('morgan')
 let bodyParser = require('body-parser')
-
-// custom models
-let UserRoutes = require('./user/routes')
-let UserDb = require('./user/model')
+var jwt = require('express-jwt');
 
 let child_process = require('child_process')
 
@@ -30,7 +23,6 @@ dotenv.load()
 const csgrant = require('cloudsim-grant')
 
 const port = process.env.CLOUDSIM_PORT || 4000
-
 
 
 // Here we get the public ip of this computer, and allow it as an origin
@@ -43,6 +35,7 @@ const corsOptions = {
   'https://cloudsim.io:5000',
   'http://localhost:8080',
   'https://localhost:5000',
+  'https://localhost:4000',
   'https://' + hostIp + ':5000',
   'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
   credentials: true
@@ -50,13 +43,18 @@ const corsOptions = {
 
 console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
 
+var localCallbackURL = 'https://localhost:' + port + '/';
+
+if (!process.env.AUTH0_CLIENT_SECRET)
+  console.log('No Auth0 client secret provided!');
+
+// Auth0 nodejs API
+var authenticate = jwt({
+  secret: new Buffer(process.env.AUTH0_CLIENT_SECRET, 'base64'),
+  audience: process.env.AUTH0_CLIENT_ID
+});
+
 app.use(cors(corsOptions))
-app.use(passport.initialize())
-// Use the BasicStrategy within Passport.
-//   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, a username and password), and invoke a callback
-//   with a user object.
-passport.use(new BasicStrategy({}, UserRoutes.verify ))
 
 // parse application/json
 app.use(bodyParser.json())
@@ -65,83 +63,26 @@ app.use(morgan('combined'))
 app.use(express.static('public'));
 
 app.get('/', function(req, res) {
-    res.sendfile('./public/index.html');
+  res.sendfile('./public/index.html');
 })
 
-app.get('/about', function(req, res) {
-  console.log('about')
-  res.end('<h1>about</h1>')
-})
-
-app.get('/logout', function(req, res){
-  req.logout()
-  res.statusCode = 401
-//  res.redirect('/')
-  res.end()
-});
-
-app.post('/register', UserRoutes.register)
-app.post('/unregister', UserRoutes.unregister)
-
-app.get('/exists', UserRoutes.exists)
-
-app.get('/admin',
-  passport.authenticate('basic', {session:false}),
-  // user.can('access admin page'),
+app.get('/token', authenticate,
   function (req,res) {
-    let s = `
-      <h1>Admin page</h1>
-      Your user name is: ${req.user}
-    `
-    res.end(s);
-})
 
-app.get('/login',
-  passport.authenticate('basic', {session:false}),
-  function (req,res) {
-    const user = req.user.username
-    console.log('processing login request for user ', user)
-    csgrant.signToken({username:user}, function(err, token) {
-      const r = {success: false,
-                 "username": user,
-                 "operation": "login"
-                }
-      if(err) {
-        r.error = err
-        // be more specific about the error
-        if (err.message)
-          r.error = err.message
-        console.log('login fail: ' + JSON.stringify(r))
-        res.jsonp(r)
-        return
-      }
-      r.login = "success"
-      r.token = token
-      r.success = true
-      console.log('login success: ' + JSON.stringify(r))
-      res.jsonp(r)
-    })
-})
+    var username = '';
+    username = req.query.username;
 
-app.get('/token',
-  passport.authenticate('basic', {session:false}),
-  // user.can('access admin page')
-  function (req,res) {
     console.log('get a token')
-    console.log('  user: ' + JSON.stringify(req.user))
-    console.log('  raw query:' + req.query)
+    console.log('  user: ' + username)
     console.log('  query: ' + JSON.stringify(req.query))
 
-    let tokenData = { username: req.user.username,
-                      data:req.query,
-                      timeout: 'never' }
+    let tokenData = {username: username}
 
-    csgrant.signToken(tokenData, (token) =>{
+    csgrant.signToken(tokenData, (err, token) =>{
       console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
-      res.jsonp({decoded: tokenData, success:true, token: token})
+      res.status(200).jsonp({decoded: tokenData, success:true, token: token});
     })
 })
-
 
 console.log('listening on port ' + port)
 console.log( 'serving from: ' + __dirname)
@@ -149,8 +90,9 @@ console.log( 'serving from: ' + __dirname)
 // http only
 // app.listen(port);
 
+// Expose app
+exports = module.exports = app;
+
 // https
 var httpsServer = https.createServer({key: privateKey, cert: certificate}, app)
 httpsServer.listen(port)
-
-

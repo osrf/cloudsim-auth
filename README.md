@@ -31,6 +31,15 @@ Put the result in a .env in the root of the project. The cloudsim-auth server
 needs both keys, but other servers (cloudsim-sim, cloudsim-portal) only need
 the public key in their .env file
 
+Cloudsim uses Auth0 for authentication. Please make sure these Auth0 variables
+are set in the .env file.
+
+~~~
+AUTH0_DOMAIN
+AUTH0_CLIENT_ID
+AUTH0_CLIENT_SECRET
+~~~~
+
 ### Contribution guidelines ###
 
 * Writing tests

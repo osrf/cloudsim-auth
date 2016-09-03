@@ -18,6 +18,8 @@ const keys = csgrant.token.generateKeys()
 csgrant.token.initKeys(keys.public, keys.private)
 
 let adminUsername = 'admin';
+if (process.env.CLOUDSIM_ADMIN)
+  adminUsername = process.env.CLOUDSIM_ADMIN;
 let user2Username = 'user2';
 let userToken = {};
 const userTokenData = {username: adminUsername};

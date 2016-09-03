@@ -8,11 +8,6 @@ const https = require('https')
 const privateKey  = fs.readFileSync('key.pem', 'utf8')
 const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
-// authentication
-const passport = require('passport')
-const Auth0Strategy = require('passport-auth0');
-
-
 // simple express server
 let express = require('express')
 let app = express()
@@ -73,18 +68,8 @@ console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
 
 var localCallbackURL = 'https://localhost:' + port + '/';
 
-// This will configure Passport to use Auth0
-var strategy = new Auth0Strategy({
-    domain:       process.env.AUTH0_DOMAIN,
-    clientID:     process.env.AUTH0_CLIENT_ID,
-    clientSecret: process.env.AUTH0_CLIENT_SECRET,
-    callbackURL:  process.env.AUTH0_CALLBACK_URL || localCallbackURL
-  }, function(accessToken, refreshToken, extraParams, profile, done) {
-    // accessToken is the token to call Auth0 API (not needed in the most cases)
-    // extraParams.id_token has the JSON Web Token
-    // profile has all the information from the user
-    return done(null, profile);
-  });
+if (!process.env.AUTH0_CLIENT_SECRET)
+  console.log('No Auth0 client secret provided!');
 
 // Auth0 nodejs API
 var authenticate = jwt({
@@ -93,17 +78,6 @@ var authenticate = jwt({
 });
 
 app.use(cors(corsOptions))
-app.use(passport.initialize())
-passport.use(strategy)
-
-// you can use this section to keep a smaller payload
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
 
 // parse application/json
 app.use(bodyParser.json())
@@ -114,13 +88,6 @@ app.use(express.static('public'));
 app.get('/', function(req, res) {
   res.sendfile('./public/index.html');
 })
-
-app.get('/login',
-  passport.authenticate('auth0'),
-  function(req, res) {
-    res.redirect('/');
-  });
-
 
 app.get('/token', authenticate,
   function (req,res) {

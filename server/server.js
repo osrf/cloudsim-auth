@@ -161,7 +161,7 @@ app.delete('/groups',
 // return res.result: ['group', group', ...]
 app.get('/groups',
     csgrant.authenticate,
-//    csgrant.userResources,
+    csgrant.userResources,
     csgrant.allResources)
 
 // add user to a group
@@ -244,7 +244,7 @@ app.delete('/permissions',
 app.get('/permissions',
     csgrant.authenticate,
     csgrant.ownsResource(rootResource, true),
-//    csgrant.userResources,
+    csgrant.userResources,
     csgrant.allResources
 )
 

@@ -157,14 +157,15 @@ app.delete('/groups',
     }
 )
 
-// get all the groups that the user is part of
-// return res.result: ['group', group', ...]
+// get all resources for a user
+// (get all the groups that the user is part of)
 app.get('/groups',
     csgrant.authenticate,
     csgrant.userResources,
     csgrant.allResources)
 
-// add user to a group
+// grant user permission to a resource
+// (add user to a group)
 app.post('/permissions',
     csgrant.authenticate,
     function (req, res) {
@@ -201,7 +202,8 @@ app.post('/permissions',
     }
 )
 
-// delete user from a group
+// revoke user permission
+// (delete user from a group)
 app.delete('/permissions',
     csgrant.authenticate,
     function (req,res) {

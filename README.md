@@ -2,6 +2,8 @@
 
 [![Dependency Status](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7)
 
+# See the Cloudsim [wiki](https://bitbucket.org/osrf/cloudsim/wiki) for documentation #
+
 # README #
 
 This is the authoring server for Cloudsim and other web apps

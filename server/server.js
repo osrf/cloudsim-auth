@@ -9,14 +9,16 @@ const privateKey  = fs.readFileSync('key.pem', 'utf8')
 const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
 // simple express server
-let express = require('express')
-let app = express()
-let router = express.Router()
-let morgan = require('morgan')
-let bodyParser = require('body-parser')
-var jwt = require('express-jwt');
+const express = require('express')
+const app = express()
+const router = express.Router()
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const jwt = require('express-jwt')
+const child_process = require('child_process')
 
-let child_process = require('child_process')
+//
+const groups = require('./groups')
 
 dotenv.load()
 
@@ -30,18 +32,8 @@ let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
 const rootResource = 'root'
-csgrant.init(adminUser, {'root': {} }, dbName, ()=>{
+csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName, ()=>{
   console.log( dbName + ' redis database loaded')
-});
-
-// grant admins permission to create groups
-const groupResource = 'group'
-csgrant.createResource(adminUser, groupResource, {},
-      (err, data) => {
-    if (err) {
-      console.log('create group error:' + err)
-      return;
-    }
 });
 
 
@@ -107,62 +99,7 @@ app.get('/token', authenticate,
     })
 })
 
-
-// create a group
-app.post('/groups',
-    csgrant.authenticate,
-    csgrant.ownsResource(groupResource, false),
-    function (req, res) {
-      const group = req.body.resource;
-      csgrant.createResource(req.user, group, {}, (err, data) => {
-        let r = {};
-        if (err) {
-          r.success = false;
-        }
-        else {
-          r.success = true;
-        }
-        res.jsonp(r);
-      })
-    }
-)
-
-// delete a group
-app.delete('/groups',
-    csgrant.authenticate,
-    function (req, res) {
-      const group = req.body.resource;
-      // check permission - only user with write access can grant permission
-      csgrant.isAuthorized(req.user, group, false, (err, authorized) => {
-        if (err) {
-          return res.jsonp({success: false, error: err})
-        }
-        if (!authorized) {
-          const msg = 'insufficient permission for user "'
-              + req.user + '"'
-          return res.jsonp({success: false, error: msg})
-        }
-        csgrant.deleteResource(req.user, group, (err, data) => {
-          let r = {};
-          if (err) {
-            r.success = false;
-          }
-          else {
-            r.success = true;
-          }
-          r.resource = group;
-          res.jsonp(r);
-        })
-      })
-    }
-)
-
-// get all resources for a user
-// (get all the groups that the user is part of)
-app.get('/groups',
-    csgrant.authenticate,
-    csgrant.userResources,
-    csgrant.allResources)
+groups.setRoutes(app)
 
 // grant user permission to a resource
 // (add user to a group)

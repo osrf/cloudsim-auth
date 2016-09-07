@@ -53,14 +53,14 @@ describe('<Unit Test>', function() {
     before(function(done) {
       agent = supertest.agent(app);
       done()
-    });
+    })
 
-    let adminGroupCount = 0;
+    const adminGroupCount = 0;
     describe('Check Non-Empty Groups for Admin', function() {
       it('should be part of admin-related groups at the beginning',
           function(done) {
         agent
-        .get('/groups')
+        .get('/permissions')
         .set('authorization', userToken)
         .end(function(err,res){
           res.status.should.be.equal(200);
@@ -69,17 +69,17 @@ describe('<Unit Test>', function() {
           response.success.should.equal(true);
           // admin should have 1) root permission and
           // 2) ability to create groups
-          response.result.length.should.be.greaterThanOrEqual(2);
-          adminGroupCount = response.result.length;
+          response.result.length.should.be.exactly(2);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
-    const groupId1 ='group1';
+    const group1name = 'group1'
+    let groupId1
     describe('Check Create Group', function() {
       it('should be possible to create a group', function(done) {
-        const data = {resource: groupId1};
+        const data = {resource: group1name};
         agent
         .post('/groups')
         .set('Acccept', 'application/json')
@@ -92,10 +92,11 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
+          groupId1 = response.id
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('Check New Group Created', function() {
       it('should be one new group', function(done) {
@@ -107,18 +108,18 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
-          response.result.length.should.be.exactly(adminGroupCount+1);
-          response.result[adminGroupCount].name.should.equal(groupId1);
+          response.result.length.should.be.exactly(1)
+          response.result[0].data.name.should.equal('group1');
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
 
-    let groupId2 ='group2';
+    let groupId2
     describe('Check Admin Create Second Group', function() {
       it('should be possible to create another group', function(done) {
-        const data = {resource: groupId2};
+        const data = {resource: 'group2'};
         agent
         .post('/groups')
         .set('Acccept', 'application/json')
@@ -130,11 +131,12 @@ describe('<Unit Test>', function() {
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
-          response.success.should.equal(true);
+          response.success.should.equal(true)
+          groupId2 = response.id
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     describe('Check Two Groups Created', function() {
       it('should be two new groups', function(done) {
@@ -146,13 +148,13 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
-          response.result.length.should.be.exactly(adminGroupCount+2);
+          response.result.length.should.be.exactly(2)
           response.result[adminGroupCount].name.should.equal(groupId1);
           response.result[adminGroupCount+1].name.should.equal(groupId2);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
 
     describe('Check Remove Group', function() {
@@ -169,9 +171,9 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
 
     describe('Check One Group Remaining', function() {
@@ -187,15 +189,15 @@ describe('<Unit Test>', function() {
           response.result.length.should.be.exactly(adminGroupCount+1);
           response.result[adminGroupCount].name.should.equal(groupId2);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // create groupId3 for permission test
-    let groupId3 ='group3';
+    let groupId3
     describe('Check Create Third Group', function() {
       it('should be possible to create a third group', function(done) {
-        const data = {resource: groupId3};
+        const data = {resource: 'group3'};
         agent
         .post('/groups')
         .set('Acccept', 'application/json')
@@ -207,11 +209,12 @@ describe('<Unit Test>', function() {
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
-          response.success.should.equal(true);
+          response.success.should.equal(true)
+          groupId3 = response.id
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // verify admin permission query for accessing group
     describe('Check Admin Permission to Access Group', function() {
@@ -250,9 +253,9 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 has no read/write permission to any group
     describe('Check Get Group without Read Permission', function() {
@@ -269,9 +272,9 @@ describe('<Unit Test>', function() {
           response.success.should.equal(true);
           response.result.length.should.be.exactly(0);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // give user2 read permission to groupId2
     describe('Grant Read Permission', function() {
@@ -290,9 +293,9 @@ describe('<Unit Test>', function() {
           response.grantee.should.equal(user2Username);
           response.readOnly.should.equal(true);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // verify user permission query for accessing group after being granted
     // permision
@@ -319,9 +322,9 @@ describe('<Unit Test>', function() {
           padmin.username.should.equal(adminUsername);
           padmin.permissions.readOnly.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should be able to see groupId2
     describe('Check Get Group with Read Permission', function() {
@@ -347,11 +350,11 @@ describe('<Unit Test>', function() {
           group2Perm[1].username.should.equal(adminUsername);
           group2Perm[1].permissions.readOnly.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
-    // user2 should not be able to remove groupId2 with only read permission
+
     describe('Check Remove Group without Write Permission', function() {
       it('should not be able to remove group without write permission',
           function(done) {
@@ -362,14 +365,13 @@ describe('<Unit Test>', function() {
         .set('authorization', user2Token)
         .send(data)
         .end(function(err,res){
-          res.status.should.be.equal(200);
+          res.status.should.be.equal(401);
           res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
+
 
     // give user2 write permission to groupId3
     describe('Grant Write Permission', function() {
@@ -388,9 +390,9 @@ describe('<Unit Test>', function() {
           response.grantee.should.equal(user2Username);
           response.readOnly.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should be able to see groupId2 and groupId3
     describe('Check Get Group with Read/Write Permission', function() {
@@ -423,9 +425,9 @@ describe('<Unit Test>', function() {
           group3Perm[1].username.should.equal(adminUsername);
           group3Perm[1].permissions.readOnly.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should be able to remove groupId3
     describe('Check Remove Group with Write Permission', function() {
@@ -441,9 +443,9 @@ describe('<Unit Test>', function() {
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // verify groupId3 is removed
     describe('Check One Group Remaining', function() {
@@ -459,15 +461,15 @@ describe('<Unit Test>', function() {
           response.result.length.should.be.greaterThanOrEqual(
               adminGroupCount+1);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // create groupId4 for revoke permission test
-    let groupId4 ='group4';
+    let groupId4
     describe('Check Create Fourth Group', function() {
       it('should be possible to create a fourth group', function(done) {
-        const data = {resource: groupId4};
+        const data = {resource: 'group4'};
         agent
         .post('/groups')
         .set('Acccept', 'application/json')
@@ -480,10 +482,11 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
+          groupId4 = response.id
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // give user2 read permission to groupId4
     describe('Grant Read Permission', function() {
@@ -497,15 +500,15 @@ describe('<Unit Test>', function() {
         .end(function(err,res){
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
+          const response = JSON.parse(res.text)
           response.success.should.equal(true);
           response.resource.should.equal(groupId4);
           response.grantee.should.equal(user2Username);
           response.readOnly.should.equal(true);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should be able to see groupId2 and groupId4
     describe('Verify User Read/Write Permission', function() {
@@ -522,9 +525,9 @@ describe('<Unit Test>', function() {
           response.result[0].name.should.equal(groupId2);
           response.result[1].name.should.equal(groupId4);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // revoke user2's read permission to groupId4
     describe('Revoke Read Permission', function() {
@@ -544,9 +547,9 @@ describe('<Unit Test>', function() {
           response.grantee.should.equal(user2Username);
           response.readOnly.should.equal(true);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should be able to see groupId2 but not groupId4
     describe('Verify Revoke User Read Permission', function() {
@@ -562,9 +565,9 @@ describe('<Unit Test>', function() {
           response.result[0].name.should.not.be.empty();
           response.result[0].name.should.be.equal(groupId2);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // update user2's read permission to write permission to groupId2
     describe('Update Read to Write Permission', function() {
@@ -584,9 +587,9 @@ describe('<Unit Test>', function() {
           response.grantee.should.equal(user2Username);
           response.readOnly.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // verify permission query for accessing group
     describe('Verify Update User Write Permission', function() {
@@ -631,9 +634,9 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(false);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // revoke user2's write permission to groupId2
     describe('Revoke User Write Permission', function() {
@@ -649,9 +652,9 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     // user2 should not be able to see any groups
     describe('Verify Revoke User Write Permission', function() {
@@ -665,14 +668,14 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.result.length.should.be.exactly(0);
           done();
-        });
-      });
-    });
+        })
+      })
+    })
 
     after(function(done) {
       // clear the database
       csgrant.model.clearDb()
-      done();
-    });
-  });
-});
+      done()
+    })
+  })
+})

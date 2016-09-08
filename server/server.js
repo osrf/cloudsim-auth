@@ -3,8 +3,6 @@
 const fs = require('fs')
 const cors = require('cors')
 const dotenv = require('dotenv')
-// ssl and https
-const https = require('https')
 const privateKey  = fs.readFileSync('key.pem', 'utf8')
 const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
@@ -93,6 +91,7 @@ console.log( 'serving from: ' + __dirname)
 // Expose app
 exports = module.exports = app;
 
-// https
-var httpsServer = https.createServer({key: privateKey, cert: certificate}, app)
-httpsServer.listen(port)
+const httpServer = require('http').Server(app)
+httpServer.listen(port, function(){
+	console.log('listening on *:' + port);
+});

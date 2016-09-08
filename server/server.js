@@ -105,78 +105,13 @@ groups.setRoutes(app)
 // (add user to a group)
 app.post('/permissions',
     csgrant.authenticate,
-    function (req, res) {
-
-      const group = req.body.resource;
-      const grantee = req.body.grantee;
-      const readOnly = req.body.readOnly;
-
-      // check permission - only user with write access can grant permission
-      csgrant.isAuthorized(req.user, group, false, (err, authorized) => {
-        if (err) {
-          return res.jsonp({success: false, error: err})
-        }
-        if (!authorized) {
-          const msg = 'insufficient permission for user "'
-              + req.user + '"'
-          return res.jsonp({success: false, error: msg})
-        }
-        csgrant.grantPermission(req.user, grantee, group, readOnly,
-            (err, success, message) => {
-          let r = {};
-          if (err) {
-            r.success = false;
-          }
-          else {
-            r.success = success;
-          }
-          r.resource = group;
-          r.grantee = grantee;
-          r.readOnly = readOnly;
-          res.jsonp(r);
-        })
-      })
-    }
-)
+    csgrant.grant)
 
 // revoke user permission
 // (delete user from a group)
 app.delete('/permissions',
     csgrant.authenticate,
-    function (req,res) {
-
-      const group = req.body.resource;
-      const grantee = req.body.grantee;
-      const readOnly = req.body.readOnly;
-
-      // check permission - only user with write access can revoke permission
-      csgrant.isAuthorized(req.user, group, false, (err, authorized) => {
-        if (err) {
-          return res.jsonp({success: false, error: err})
-        }
-        if (!authorized) {
-          const msg = 'insufficient permission for user "'
-              + req.user + '"'
-          return res.jsonp({success: false, error: msg})
-        }
-
-        csgrant.revokePermission(req.user, grantee, group, readOnly,
-            (err, success, message) => {
-          let r = {};
-          if (err) {
-            r.success = false;
-          }
-          else {
-            r.success = success;
-          }
-          r.resource = group;
-          r.grantee = grantee;
-          r.readOnly = readOnly;
-          res.jsonp(r);
-        })
-      })
-    }
-)
+    csgrant.revoke)
 
 // get all user permissions for all resources
 // (get all users for all groups)

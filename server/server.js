@@ -3,8 +3,6 @@
 const fs = require('fs')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const privateKey  = fs.readFileSync('key.pem', 'utf8')
-const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
 // simple express server
 let express = require('express')

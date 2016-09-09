@@ -18,7 +18,7 @@ dotenv.load()
 
 const csgrant = require('cloudsim-grant')
 
-const port = process.env.CLOUDSIM_PORT || 80
+const port = process.env.PORT
 
 
 // Here we get the public ip of this computer, and allow it as an origin

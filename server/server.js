@@ -80,12 +80,6 @@ app.get('/token', authenticate,
     })
 })
 
-console.log('listening on port ' + port)
-console.log( 'serving from: ' + __dirname)
-
-// http only
-// app.listen(port);
-
 // Expose app
 exports = module.exports = app;
 
@@ -104,3 +98,6 @@ else {
   httpServer = require('http').Server(app)
 }
 httpServer.listen(port)
+
+console.log('listening on port ' + port)
+console.log( 'serving from: ' + __dirname)

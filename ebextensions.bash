@@ -7,8 +7,8 @@ echo "    SSLCertificateId: $1" >> .ebextensions/https-lbterminate.config
 echo "    ListenerProtocol: HTTPS" >> .ebextensions/https-lbterminate.config
 echo "  # Use the custom security group for the load balancer" >> .ebextensions/https-lbterminate.config
 echo "  aws:elb:loadbalancer:" >> .ebextensions/https-lbterminate.config
-echo "    SecurityGroups: '`{ \"Ref\" : \"loadbalancersg\" }`'" >> .ebextensions/https-lbterminate.config
-echo "    ManagedSecurityGroup: '`{ \"Ref\" : \"loadbalancersg\" }`'" >> .ebextensions/https-lbterminate.config
+echo "    SecurityGroups: '\`{ \"Ref\" : \"loadbalancersg\" }\`'" >> .ebextensions/https-lbterminate.config
+echo "    ManagedSecurityGroup: '\`{ \"Ref\" : \"loadbalancersg\" }\`'" >> .ebextensions/https-lbterminate.config
 echo "Resources:" >> .ebextensions/https-lbterminate.config
 echo "  # Create a custom load balancer security group for ease of modification" >> .ebextensions/https-lbterminate.config
 echo "  loadbalancersg:" >> .ebextensions/https-lbterminate.config

@@ -3,10 +3,6 @@
 const fs = require('fs')
 const cors = require('cors')
 const dotenv = require('dotenv')
-// ssl and https
-const https = require('https')
-const privateKey  = fs.readFileSync('key.pem', 'utf8')
-const certificate = fs.readFileSync('key-cert.pem', 'utf8')
 
 // simple express server
 let express = require('express')
@@ -22,7 +18,7 @@ dotenv.load()
 
 const csgrant = require('cloudsim-grant')
 
-const port = process.env.CLOUDSIM_PORT || 4000
+const port = process.env.PORT || 4000
 
 
 // Here we get the public ip of this computer, and allow it as an origin
@@ -84,15 +80,24 @@ app.get('/token', authenticate,
     })
 })
 
-console.log('listening on port ' + port)
-console.log( 'serving from: ' + __dirname)
-
-// http only
-// app.listen(port);
-
 // Expose app
 exports = module.exports = app;
 
-// https
-var httpsServer = https.createServer({key: privateKey, cert: certificate}, app)
-httpsServer.listen(port)
+// ssl and https
+let httpServer = null
+
+const useHttps = false
+if(useHttps) {
+  const privateKey  = fs.readFileSync(__dirname + '/key.pem', 'utf8')
+  const certificate = fs.readFileSync(__dirname + '/key-cert.pem', 'utf8')
+  httpServer = require('https').Server({
+    key: privateKey, cert: certificate
+  }, app)
+}
+else {
+  httpServer = require('http').Server(app)
+}
+httpServer.listen(port)
+
+console.log('listening on port ' + port)
+console.log( 'serving from: ' + __dirname)

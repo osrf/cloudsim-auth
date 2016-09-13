@@ -57,8 +57,10 @@ console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
 
 var localCallbackURL = 'https://localhost:' + port + '/';
 
-if (!process.env.AUTH0_CLIENT_SECRET)
-  console.log('No Auth0 client secret provided!');
+if (!process.env.AUTH0_CLIENT_SECRET) {
+  console.log('No Auth0 client secret provided! Using fake secret');
+  process.env.AUTH0_CLIENT_SECRET = 'secret'
+}
 
 // Auth0 nodejs API
 var authenticate = jwt({
@@ -78,22 +80,32 @@ app.get('/', function(req, res) {
   res.sendfile('./public/index.html');
 })
 
-app.get('/token', authenticate,
-  function (req,res) {
+app.get('/token',
+        authenticate,
+        function (req, res, next) {
+          req.user = req.query.username
+          next()
+        },
+        csgrant.userResources,
+        function (req ,res) {
 
-    var username = '';
-    username = req.query.username;
+          let groups = []
+          for (let i = 0; i < req.userResources.length; ++i) {
+            groups.push(req.userResources[i].name)
+          }
 
-    console.log('get a token')
-    console.log('  user: ' + username)
-    console.log('  query: ' + JSON.stringify(req.query))
+          console.log('get a token')
+          console.log('  user: ' + req.user)
+          console.log('  query: ' + JSON.stringify(req.query))
 
-    let tokenData = {username: username}
+          let tokenData = {username: req.user, groups: groups}
 
-    csgrant.signToken(tokenData, (err, token) =>{
-      console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
-      res.status(200).jsonp({decoded: tokenData, success:true, token: token});
-    })
+          csgrant.signToken(tokenData, (err, token) =>{
+            console.log('  signed ' + token)
+            res.status(200).jsonp(
+                {decoded: tokenData, success:true, token: token});
+          })
+
 })
 
 groups.setRoutes(app)

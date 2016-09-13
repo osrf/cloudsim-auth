@@ -1,16 +1,23 @@
 'use strict'
 
+const csgrant = require('cloudsim-grant')
 const should = require('should')
 const supertest = require('supertest');
 const app = require('../server/server')
+const jwt = require('jsonwebtoken');
+
 let agent;
+
+let adminUsername = 'admin';
+if (process.env.CLOUDSIM_ADMIN)
+  adminUsername = process.env.CLOUDSIM_ADMIN;
 
 describe('<Unit Test>', function() {
 
   before(function(done) {
-      console.log('before')
-      agent = supertest.agent(app);
-      done()
+    // create superagent
+    agent = supertest.agent(app)
+    done()
   })
 
   describe('Authentication:', function(){
@@ -34,5 +41,28 @@ describe('<Unit Test>', function() {
       });
     })
 
+    it('should be able to get token with authorization', (done) => {
+      const payload = {aud: process.env.AUTH0_CLIENT_ID}
+      const auth0Token = jwt.sign(payload,
+          new Buffer(process.env.AUTH0_CLIENT_SECRET, 'base64'))
+      agent
+      .get('/token')
+      .set('Acccept', 'application/json')
+      .query({username: adminUsername})
+      .set('authorization', 'Bearer ' + auth0Token)
+      .end(function(err,res){
+        res.status.should.be.equal(200);
+        res.redirect.should.equal(false);
+        // verify token data
+        const response = JSON.parse(res.text)
+        response.decoded.username.should.equal(adminUsername)
+        response.decoded.groups.length.should.be.greaterThan(0)
+        done();
+      })
+    })
+  })
+
+  after(function(done) {
+    done()
   })
 })

@@ -5,18 +5,33 @@ const cors = require('cors')
 const dotenv = require('dotenv')
 
 // simple express server
-let express = require('express')
-let app = express()
-let router = express.Router()
-let morgan = require('morgan')
-let bodyParser = require('body-parser')
-var jwt = require('express-jwt');
+const express = require('express')
+const app = express()
+const router = express.Router()
+const morgan = require('morgan')
+const bodyParser = require('body-parser')
+const jwt = require('express-jwt')
+const child_process = require('child_process')
 
-let child_process = require('child_process')
+//
+const groups = require('./groups')
 
 dotenv.load()
 
+// csgrant
+let dbName = 'cloudsim-auth'
+if (process.env.NODE_ENV === 'test'){
+  dbName = dbName + '-test'
+}
 const csgrant = require('cloudsim-grant')
+let adminUser = 'admin'
+if (process.env.CLOUDSIM_ADMIN)
+  adminUser = process.env.CLOUDSIM_ADMIN;
+const rootResource = 'root'
+csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName, ()=>{
+  console.log( dbName + ' redis database loaded')
+});
+
 
 const port = process.env.PORT || 4000
 
@@ -80,6 +95,44 @@ app.get('/token', authenticate,
       res.status(200).jsonp({decoded: tokenData, success:true, token: token});
     })
 })
+
+groups.setRoutes(app)
+
+// grant user permission to a resource
+// (add user to a group)
+app.post('/permissions',
+    csgrant.authenticate,
+    csgrant.grant)
+
+// revoke user permission
+// (delete user from a group)
+app.delete('/permissions',
+    csgrant.authenticate,
+    csgrant.revoke)
+
+// get all user permissions for all resources
+// (get all users for all groups)
+app.get('/permissions',
+    csgrant.authenticate,
+    csgrant.ownsResource(rootResource, true),
+    csgrant.userResources,
+    csgrant.allResources
+)
+
+// get user permissions for a resource
+// (get users in a group)
+app.get('/permissions/:resourceId',
+    csgrant.authenticate,
+    csgrant.ownsResource(':resourceId', true),
+    csgrant.resource
+)
+
+/// param for resource name
+app.param('resourceId', function(req, res, next, id) {
+  req.resourceId = id
+  next()
+})
+
 
 // Expose app
 exports = module.exports = app;

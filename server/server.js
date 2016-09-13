@@ -28,6 +28,7 @@ const corsOptions = {
   origin: [
   'https://osrf.github.io',
   'https://cloudsim.io',
+  'https://dev.cloudsim.io',
   'https://cloudsim.io:5000',
   'http://localhost:8080',
   'https://localhost:5000',

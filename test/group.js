@@ -743,6 +743,110 @@ describe('<Unit Test>', function() {
       })
     })
 
+
+    // give user2 read permission to groupId4 for user management testing
+    describe('Grant Read Permission', function() {
+      it('should be possible to grant user read permission to more groups',
+          function(done) {
+        agent
+        .post('/permissions')
+        .set('Acccept', 'application/json')
+        .set('authorization', userToken)
+        .send({resource: groupId4, grantee: user2Username, readOnly: true})
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text)
+          response.success.should.equal(true);
+          response.resource.should.equal(groupId4);
+          response.grantee.should.equal(user2Username);
+          response.readOnly.should.equal(true);
+          done();
+        })
+      })
+    })
+
+    // verify admin and user2 permissions on groupId4
+    describe('Check Group Permissions', function() {
+      it('should be able to see two groups', function(done) {
+        agent
+        .get('/groups')
+        .set('authorization', userToken)
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          response.result.length.should.be.exactly(2);
+          // console.log(JSON.stringify(response.result))
+          // group 2 consists of admin with write access
+          response.result[0].name.should.equal(groupId2);
+          const group2Perm = response.result[0].permissions;
+          group2Perm.length.should.be.exactly(1);
+          group2Perm[0].username.should.equal(adminUsername);
+          group2Perm[0].permissions.readOnly.should.equal(false);
+          // group 4 consists of admin with write access
+          // and user with read access
+          response.result[1].name.should.equal(groupId4);
+          const group4Perm = response.result[1].permissions;
+          group4Perm.length.should.be.exactly(2);
+          group4Perm[0].username.should.equal(adminUsername);
+          group4Perm[0].permissions.readOnly.should.equal(false);
+          group4Perm[1].username.should.equal(user2Username);
+          group4Perm[1].permissions.readOnly.should.equal(true);
+          done();
+        })
+      })
+    })
+
+    // delete user2
+    describe('Delete User', function() {
+      it('should be possible for admin to delete user', function(done) {
+        agent
+        .delete('/users/' + user2Username)
+        .set('Acccept', 'application/json')
+        .set('authorization', userToken)
+        .send({auth0Id: 'some_id'})
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          done();
+        })
+      })
+    })
+
+    // verify user2 is removed from permission list of all resources
+    describe('Check Group Permissions', function() {
+      it('should be able to see two groups', function(done) {
+        agent
+        .get('/groups')
+        .set('authorization', userToken)
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          response.result.length.should.be.exactly(2);
+          // console.log(JSON.stringify(response.result))
+          // group 2 consists of admin with write access
+          response.result[0].name.should.equal(groupId2);
+          const group2Perm = response.result[0].permissions;
+          group2Perm.length.should.be.exactly(1);
+          group2Perm[0].username.should.equal(adminUsername);
+          group2Perm[0].permissions.readOnly.should.equal(false);
+          // group 4 consists of admin with write access
+          response.result[1].name.should.equal(groupId4);
+          const group4Perm = response.result[1].permissions;
+          group4Perm.length.should.be.exactly(1);
+          group4Perm[0].username.should.equal(adminUsername);
+          group4Perm[0].permissions.readOnly.should.equal(false);
+          done();
+        })
+      })
+    })
+
     after(function(done) {
       // clear the database
       csgrant.model.clearDb()

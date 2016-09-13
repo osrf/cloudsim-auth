@@ -20,6 +20,9 @@ csgrant.token.initKeys(keys.public, keys.private)
 let adminUsername = 'admin';
 if (process.env.CLOUDSIM_ADMIN)
   adminUsername = process.env.CLOUDSIM_ADMIN;
+
+let groupResource = 'group';
+
 let user2Username = 'user2';
 let userToken = {};
 const userTokenData = {username: adminUsername};
@@ -55,7 +58,6 @@ describe('<Unit Test>', function() {
       done()
     })
 
-    const adminGroupCount = 0;
     describe('Check Non-Empty Groups for Admin', function() {
       it('should be part of admin-related groups at the beginning',
           function(done) {
@@ -109,7 +111,7 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
           response.result.length.should.be.exactly(1)
-          response.result[0].data.name.should.equal('group1');
+          response.result[0].data.name.should.equal(group1name);
           done();
         })
       })
@@ -149,8 +151,8 @@ describe('<Unit Test>', function() {
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
           response.result.length.should.be.exactly(2)
-          response.result[adminGroupCount].name.should.equal(groupId1);
-          response.result[adminGroupCount+1].name.should.equal(groupId2);
+          response.result[0].name.should.equal(groupId1);
+          response.result[1].name.should.equal(groupId2);
           done();
         })
       })
@@ -186,8 +188,8 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
-          response.result.length.should.be.exactly(adminGroupCount+1);
-          response.result[adminGroupCount].name.should.equal(groupId2);
+          response.result.length.should.be.exactly(1);
+          response.result[0].name.should.equal(groupId2);
           done();
         })
       })
@@ -367,6 +369,8 @@ describe('<Unit Test>', function() {
         .end(function(err,res){
           res.status.should.be.equal(401);
           res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(false);
           done();
         })
       })
@@ -442,6 +446,8 @@ describe('<Unit Test>', function() {
         .end(function(err,res){
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
           done();
         })
       })
@@ -458,8 +464,7 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.success.should.equal(true);
-          response.result.length.should.be.greaterThanOrEqual(
-              adminGroupCount+1);
+          response.result.length.should.be.exactly(1);
           done();
         })
       })
@@ -667,6 +672,72 @@ describe('<Unit Test>', function() {
           res.redirect.should.equal(false);
           const response = JSON.parse(res.text);
           response.result.length.should.be.exactly(0);
+          done();
+        })
+      })
+    })
+
+    // give user2 permission to create groups
+    describe('Grant Permission to Create Groups', function() {
+      it('should be possible to grant user permission to create groups',
+          function(done) {
+        agent
+        .post('/permissions')
+        .set('Acccept', 'application/json')
+        .set('authorization', userToken)
+        .send({resource: groupResource, grantee: user2Username,
+            readOnly: false})
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text)
+          response.success.should.equal(true);
+          response.resource.should.equal(groupResource);
+          response.grantee.should.equal(user2Username);
+          response.readOnly.should.equal(false);
+          done();
+        })
+      })
+    })
+
+    // verify user2 will be able to create a group
+    const group5name = 'group5'
+    let groupId5
+    describe('Check User Create Group', function() {
+      it('should be possible for user to create a group', function(done) {
+        const data = {resource: group5name};
+        agent
+        .post('/groups')
+        .set('Acccept', 'application/json')
+        .set('authorization', user2Token)
+        .send(data)
+        .end(function(err,res){
+          should.not.exist(err);
+          should.exist(res);
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          groupId5 = response.id
+          done();
+        })
+      })
+    })
+
+    // verify group5 is created
+    describe('Check New Group Created by User', function() {
+      it('should be one new group', function(done) {
+        agent
+        .get('/groups')
+        .set('authorization', user2Token)
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          response.result.length.should.be.exactly(1)
+          response.result[0].name.should.equal(groupId5);
+          response.result[0].data.name.should.equal(group5name);
           done();
         })
       })

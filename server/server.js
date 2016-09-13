@@ -103,7 +103,7 @@ app.get('/token',
           csgrant.signToken(tokenData, (err, token) =>{
             console.log('  signed ' + token)
             res.status(200).jsonp(
-                {decoded: tokenData, success:true, token: token});
+                {decoded: tokenData, success:true, token: token})
           })
 
 })

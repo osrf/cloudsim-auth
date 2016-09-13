@@ -56,7 +56,7 @@ describe('<Unit Test>', function() {
         const response = JSON.parse(res.text)
         response.decoded.username.should.equal(adminUsername)
         response.decoded.groups.length.should.be.greaterThan(0)
-        done();
+        done()
       })
     })
   })

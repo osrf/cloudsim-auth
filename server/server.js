@@ -15,6 +15,7 @@ const child_process = require('child_process')
 
 //
 const groups = require('./groups')
+const users = require('./users')
 
 dotenv.load()
 
@@ -96,6 +97,7 @@ app.get('/token', authenticate,
 })
 
 groups.setRoutes(app)
+users.setRoutes(app)
 
 // grant user permission to a resource
 // (add user to a group)

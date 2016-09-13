@@ -1,6 +1,5 @@
 'use strict'
 
-const csgrant = require('cloudsim-grant')
 const should = require('should')
 const supertest = require('supertest');
 const app = require('../server/server')

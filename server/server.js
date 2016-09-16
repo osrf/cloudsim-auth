@@ -89,16 +89,24 @@ app.get('/token',
         csgrant.userResources,
         function (req ,res) {
 
+          let userResources = req.userResources.filter( (obj)=>{
+            if(obj.name.indexOf('group-') == 0)
+              return true
+            return false
+          })
+
           let groups = []
-          for (let i = 0; i < req.userResources.length; ++i) {
-            groups.push(req.userResources[i].name)
+          for (let i = 0; i < userResources.length; ++i) {
+            groups.push(ruserResources[i].name)
           }
 
           console.log('get a token')
           console.log('  user: ' + req.user)
           console.log('  query: ' + JSON.stringify(req.query))
 
-          let tokenData = {username: req.user, groups: groups}
+          let identities = [req.user]
+          identities = identities.concat(groups)
+          let tokenData = {identities: identities}
 
           csgrant.signToken(tokenData, (err, token) =>{
             console.log('  signed ' + token)

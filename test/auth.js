@@ -1,5 +1,6 @@
 'use strict'
 
+const csgrant = require('cloudsim-grant')
 const should = require('should')
 const supertest = require('supertest');
 const app = require('../server/server')
@@ -54,9 +55,13 @@ describe('<Unit Test>', function() {
         res.redirect.should.equal(false);
         // verify token data
         const response = JSON.parse(res.text)
-        response.decoded.username.should.equal(adminUsername)
-        response.decoded.groups.length.should.be.greaterThan(0)
-        done()
+        response.should.not.be.empty()
+        csgrant.verifyToken(response.token, (err, decoded) => {
+          decoded.identities.length.should.be.greaterThan(0)
+          const userIdx = decoded.identities.indexOf(adminUsername)
+          userIdx.should.be.greaterThanOrEqual(0)
+          done()
+        })
       })
     })
   })

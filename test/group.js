@@ -241,6 +241,24 @@ describe('<Unit Test>', function() {
       })
     })
 
+    // verify all permissions for user
+    describe('Check User has no permissions', function() {
+      it('should not have access to any resources',
+          function(done) {
+        agent
+        .get('/permissions')
+        .set('authorization', user2Token)
+        .end(function(err,res){
+          res.status.should.be.equal(200);
+          res.redirect.should.equal(false);
+          const response = JSON.parse(res.text);
+          response.success.should.equal(true);
+          response.result.length.should.be.exactly(0);
+          done();
+        })
+      })
+    })
+
     // verify user permission query for accessing group
     describe('Check User Permission to Access Group:', function() {
       it('should not have access to group without permission',

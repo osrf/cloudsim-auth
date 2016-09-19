@@ -2,6 +2,8 @@
 
 [![Dependency Status](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7)
 
+[![Coverage Status](https://coveralls.io/repos/bitbucket/osrf/cloudsim-auth/badge.svg?branch=default)](https://coveralls.io/bitbucket/osrf/cloudsim-auth?branch=default)
+
 # See the Cloudsim [wiki](https://bitbucket.org/osrf/cloudsim/wiki) for documentation #
 
 # README #

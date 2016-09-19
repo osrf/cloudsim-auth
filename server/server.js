@@ -130,11 +130,9 @@ app.delete('/permissions',
     csgrant.authenticate,
     csgrant.revoke)
 
-// get all user permissions for all resources
-// (get all users for all groups)
+// get all permissions for a user
 app.get('/permissions',
     csgrant.authenticate,
-    csgrant.ownsResource(rootResource, true),
     csgrant.userResources,
     csgrant.allResources
 )

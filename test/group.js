@@ -161,10 +161,9 @@ describe('<Unit Test>', function() {
 
     describe('Check Remove Group', function() {
       it('should be possible to remove a group', function(done) {
-        const data = {resource: groupId1};
         agent
-        .delete('/groups')
-        .send(data)
+        .delete('/groups/' + groupId1)
+        .send({})
         .set('Acccept', 'application/json')
         .set('authorization', userToken)
         .end(function(err,res){
@@ -378,12 +377,11 @@ describe('<Unit Test>', function() {
     describe('Check Remove Group without Write Permission', function() {
       it('should not be able to remove group without write permission',
           function(done) {
-        const data = {resource: groupId2};
         agent
-        .delete('/groups')
+        .delete('/groups/' + groupId2)
         .set('Acccept', 'application/json')
         .set('authorization', user2Token)
-        .send(data)
+        .send({})
         .end(function(err,res){
           res.status.should.be.equal(401);
           res.redirect.should.equal(false);
@@ -455,12 +453,11 @@ describe('<Unit Test>', function() {
     describe('Check Remove Group with Write Permission', function() {
       it('should be able to remove group with write permission',
           function(done) {
-        const data = {resource: groupId3};
         agent
-        .delete('/groups')
+        .delete('/groups/' + groupId3)
         .set('Acccept', 'application/json')
         .set('authorization', user2Token)
-        .send(data)
+        .send({})
         .end(function(err,res){
           res.status.should.be.equal(200);
           res.redirect.should.equal(false);

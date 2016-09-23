@@ -20,6 +20,8 @@ dotenv.load()
 
 // csgrant
 let dbName = 'cloudsim-auth'
+process.env.CLOUDSIM_AUTH_DB = process.env.CLOUDSIM_AUTH_DB || 'localhost'
+
 if (process.env.NODE_ENV === 'test'){
   dbName = dbName + '-test'
 }
@@ -28,13 +30,13 @@ let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
 const rootResource = 'root'
-csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName, ()=>{
+csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName,
+  process.env.CLOUDSIM_AUTH_DB, ()=>{
   console.log( dbName + ' redis database loaded')
 });
 
 
 const port = process.env.PORT || 4000
-
 
 // Here we get the public ip of this computer, and allow it as an origin
 const hostIp  = child_process.execSync(
@@ -52,8 +54,6 @@ const corsOptions = {
   'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
   credentials: true
 }
-
-console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
 
 var localCallbackURL = 'https://localhost:' + port + '/';
 
@@ -135,6 +135,22 @@ app.param('resourceId', function(req, res, next, id) {
 // Expose app
 exports = module.exports = app;
 
+console.log('\n\n')
+console.log('============================================')
+console.log('cloudsim-auth version: ', require('../package.json').version)
+console.log('server: ', __filename)
+console.log('serving from: ', __dirname)
+console.log('port: ' + port)
+console.log('cloudsim-grant version: ', require('cloudsim-grant/package.json').version)
+console.log('admin user: ' + adminUser)
+console.log('environment: ' + process.env.NODE_ENV)
+console.log('redis database name: ' + dbName)
+console.log('redis database url: ' + process.env.CLOUDSIM_AUTH_DB)
+console.log('Supported origins for today: ' + JSON.stringify(corsOptions, null, 2))
+console.log('============================================')
+console.log('\n\n')
+
+
 // ssl and https
 let httpServer = null
 
@@ -151,5 +167,3 @@ else {
 }
 httpServer.listen(port)
 
-console.log('listening on port ' + port)
-console.log( 'serving from: ' + __dirname)

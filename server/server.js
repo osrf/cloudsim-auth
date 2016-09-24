@@ -84,6 +84,7 @@ app.get('/token',
         authenticate,
         function (req, res, next) {
           req.user = req.query.username
+          req.identities = [req.user]
           next()
         },
         csgrant.userResources,

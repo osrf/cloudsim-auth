@@ -8,14 +8,8 @@ const csgrant = require('cloudsim-grant')
 function setRoutes(app) {
 
   // delete a group
-  app.delete('/groups',
+  app.delete('/groups/:group',
       csgrant.authenticate,
-      function (req, res, next) {
-        // put the group name in req.group
-        req.group = req.body.resource
-        next()
-      },
-      // check permissison for resource in req.group
       csgrant.ownsResource(':group', false),
       function (req, res) {
 
@@ -85,6 +79,12 @@ function setRoutes(app) {
         })
       })
    })
+
+  // group route parameter
+  app.param('group', function( req, res, next, id) {
+    req.group = id
+    next()
+  })
 }
 
 exports.setRoutes = setRoutes

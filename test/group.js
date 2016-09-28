@@ -24,9 +24,9 @@ let groupResource = 'group';
 
 let user2Username = 'user2';
 let userToken = {};
-const userTokenData = {username: adminUsername};
+const userTokenData = {identities: [adminUsername]};
 let user2Token = {};
-const user2TokenData = {username: user2Username};
+const user2TokenData = {identities: [user2Username]};
 
 let agent;
 
@@ -35,13 +35,13 @@ describe('<Unit Test>', function() {
   before(function(done) {
     csgrant.model.clearDb()
     csgrant.token.signToken(userTokenData, (e, tok)=>{
-      console.log('token signed for user "' + userTokenData.username  + '"')
+      console.log('token signed for user "' + userTokenData.identities[0]  + '"')
       if(e) {
         console.log('sign error: ' + e)
       }
       userToken = tok
       csgrant.token.signToken(user2TokenData, (e, tok)=>{
-        console.log('token signed for user "' + user2TokenData.username  + '"')
+        console.log('token signed for user "' + user2TokenData.identities[0]  + '"')
         if(e) {
           console.log('sign error: ' + e)
         }
@@ -57,7 +57,7 @@ describe('<Unit Test>', function() {
       done()
     })
 
-    describe('Check Non-Empty Groups for Admin', function() {
+    describe('Check Non-Empty Resources for Admin', function() {
       it('should be part of admin-related groups at the beginning',
           function(done) {
             agent

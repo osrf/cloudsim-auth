@@ -19,6 +19,8 @@ dotenv.load()
 
 // csgrant
 let dbName = 'cloudsim-auth'
+process.env.CLOUDSIM_AUTH_DB = process.env.CLOUDSIM_AUTH_DB || 'localhost'
+
 if (process.env.NODE_ENV === 'test'){
   dbName = dbName + '-test'
 }
@@ -26,13 +28,13 @@ const csgrant = require('cloudsim-grant')
 let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
-csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName, ()=>{
-  console.log( dbName + ' redis database loaded')
-});
+csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName,
+  process.env.CLOUDSIM_AUTH_DB, ()=>{
+    console.log( dbName + ' redis database loaded')
+  });
 
 
 const port = process.env.PORT || 4000
-
 
 // Here we get the public ip of this computer, and allow it as an origin
 const hostIp  = child_process.execSync(
@@ -51,10 +53,10 @@ const corsOptions = {
   credentials: true
 }
 
-console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
-
-if (!process.env.AUTH0_CLIENT_SECRET)
-  console.log('No Auth0 client secret provided!');
+if (!process.env.AUTH0_CLIENT_SECRET) {
+  console.log('No Auth0 client secret provided! Using fake secret');
+  process.env.AUTH0_CLIENT_SECRET = 'secret'
+}
 
 // Auth0 nodejs API
 var authenticate = jwt({
@@ -74,23 +76,42 @@ app.get('/', function(req, res) {
   res.sendfile('./public/index.html');
 })
 
-app.get('/token', authenticate,
-  function (req,res) {
+app.get('/token',
+        authenticate,
+        function (req, res, next) {
+          req.user = req.query.username
+          req.identities = [req.user]
+          next()
+        },
+        csgrant.userResources,
+        function (req ,res) {
 
-    var username = '';
-    username = req.query.username;
+          let userResources = req.userResources.filter( (obj)=>{
+            if(obj.name.indexOf('group-') == 0)
+              return true
+            return false
+          })
 
-    console.log('get a token')
-    console.log('  user: ' + username)
-    console.log('  query: ' + JSON.stringify(req.query))
+          let groups = []
+          for (let i = 0; i < userResources.length; ++i) {
+            groups.push(userResources[i].name)
+          }
 
-    let tokenData = {username: username}
+          console.log('get a token')
+          console.log('  user: ' + req.user)
+          console.log('  query: ' + JSON.stringify(req.query))
 
-    csgrant.signToken(tokenData, (err, token) =>{
-      console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
-      res.status(200).jsonp({decoded: tokenData, success:true, token: token});
-    })
-  })
+          let identities = [req.user]
+          identities = identities.concat(groups)
+          let tokenData = {identities: identities}
+
+          csgrant.signToken(tokenData, (err, token) =>{
+            console.log('  signed ' + token)
+            res.status(200).jsonp(
+                {decoded: tokenData, success:true, token: token})
+          })
+
+        })
 
 groups.setRoutes(app)
 
@@ -131,6 +152,22 @@ app.param('resourceId', function(req, res, next, id) {
 // Expose app
 exports = module.exports = app;
 
+console.log('\n\n')
+console.log('============================================')
+console.log('cloudsim-auth version: ', require('../package.json').version)
+console.log('server: ', __filename)
+console.log('serving from: ', __dirname)
+console.log('port: ' + port)
+console.log('cloudsim-grant version: ', require('cloudsim-grant/package.json').version)
+console.log('admin user: ' + adminUser)
+console.log('environment: ' + process.env.NODE_ENV)
+console.log('redis database name: ' + dbName)
+console.log('redis database url: ' + process.env.CLOUDSIM_AUTH_DB)
+console.log('Supported origins for today: ' + JSON.stringify(corsOptions, null, 2))
+console.log('============================================')
+console.log('\n\n')
+
+
 // ssl and https
 let httpServer = null
 
@@ -147,5 +184,3 @@ else {
 }
 httpServer.listen(port)
 
-console.log('listening on port ' + port)
-console.log( 'serving from: ' + __dirname)

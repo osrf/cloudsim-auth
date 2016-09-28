@@ -11,7 +11,6 @@ const app = require('../server/server')
 
 const should = require('should');
 const supertest = require('supertest');
-const jwt = require('jsonwebtoken');
 
 // we need fresh keys for this test
 const keys = csgrant.token.generateKeys()
@@ -117,33 +116,6 @@ describe('<Unit Test>', function() {
       })
     })
 
-    describe('Check Token Identities Data for Group', function() {
-      it('should be able to see the group name in the user token', (done) => {
-        const payload = {aud: process.env.AUTH0_CLIENT_ID}
-        const auth0Token = jwt.sign(payload,
-            new Buffer(process.env.AUTH0_CLIENT_SECRET, 'base64'))
-        agent
-        .get('/token')
-        .set('Acccept', 'application/json')
-        .query({username: adminUsername})
-        .set('authorization', 'Bearer ' + auth0Token)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          // verify token data
-          const response = JSON.parse(res.text)
-          response.should.not.be.empty()
-          csgrant.verifyToken(response.token, (err, decoded) => {
-            decoded.identities.length.should.be.greaterThan(0)
-            const userIdx = decoded.identities.indexOf(adminUsername)
-            userIdx.should.be.greaterThanOrEqual(0)
-            const groupIdx = decoded.identities.indexOf(group1name)
-            groupIdx.should.be.greaterThanOrEqual(0)
-            done()
-          })
-        })
-      })
-    })
 
     let groupId2
     describe('Check Admin Create Second Group', function() {

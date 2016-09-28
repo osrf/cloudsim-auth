@@ -94,7 +94,7 @@ app.get('/token',
 
           let groups = []
           for (let i = 0; i < userResources.length; ++i) {
-            groups.push(userResources[i].data.name)
+            groups.push(userResources[i].name)
           }
 
           console.log('get a token')
@@ -183,3 +183,4 @@ else {
   httpServer = require('http').Server(app)
 }
 httpServer.listen(port)
+

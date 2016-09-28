@@ -7,19 +7,19 @@ var NodeRSA = require('node-rsa')
 function generateKeys(){
   var key = new NodeRSA({b: 512, e: 5});
 
-    key.setOptions({
-        encryptionScheme: {
-        scheme: 'pkcs1',
-        label: 'Optimization-Service'
+  key.setOptions({
+    encryptionScheme: {
+      scheme: 'pkcs1',
+      label: 'Optimization-Service'
     },
     signingScheme: {
-        saltLength: 25
+      saltLength: 25
     }
   });
 
   return {
-        "private" : key.exportKey('pkcs1-private-pem'),
-        "public"  : key.exportKey('pkcs8-public-pem')
+    "private" : key.exportKey('pkcs1-private-pem'),
+    "public"  : key.exportKey('pkcs8-public-pem')
   };
 }
 
@@ -36,8 +36,6 @@ console.log('pub:' + pub)
 let data = {role:'admin', color:'blue'}
 
 console.log('\n\ndata: ' + JSON.stringify(data) )
-var token;
-
 
 jwt.sign(data, priv, { algorithm: 'RS256' }, (token) => {  // , {algorithm: 'RS256'})
   console.log('token: ' + token)

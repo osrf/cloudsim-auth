@@ -1,31 +1,28 @@
 'use strict'
 
-const express = require('express')
-const router = express.Router()
 const csgrant = require('cloudsim-grant')
-
 
 function setRoutes(app) {
 
   // delete a group
   app.delete('/groups/:group',
-      csgrant.authenticate,
-      csgrant.ownsResource(':group', false),
-      function (req, res) {
+    csgrant.authenticate,
+    csgrant.ownsResource(':group', false),
+    function (req, res) {
 
-        csgrant.deleteResource(req.user, req.group, (err, data) => {
-            let r = {};
-            if (err) {
-              r.success = false;
-            }
-            else {
-              r.success = true;
-            }
-            r.resource = req.resourceData;
-            res.jsonp(r);
-          })
+      csgrant.deleteResource(req.user, req.group, (err) => {
+        let r = {};
+        if (err) {
+          r.success = false;
+        }
+        else {
+          r.success = true;
+        }
+        r.resource = req.resourceData;
+        res.jsonp(r);
+      })
 
-      }
+    }
   )
 
   // get all resources for a user
@@ -53,26 +50,26 @@ function setRoutes(app) {
       function (req, res) {
         const groupName = req.body.resource
         csgrant.getNextResourceId('group', (err, resourceName) => {
-        if(err) {
+          if(err) {
 
-          res.status(500).jsonp(error(err))
-          return
-        }
+            res.status(500).jsonp(error(err))
+            return
+          }
 
-        csgrant.createResource(req.user, resourceName, {name: groupName}, (err, data) => {
-          let r = {};
-          if (err) {
-            r.success = false
-          }
-          else {
-            r.success = true
-            r.result = data
-            r.id = resourceName
-          }
-          res.jsonp(r);
+          csgrant.createResource(req.user, resourceName, {name: groupName}, (err, data) => {
+            let r = {};
+            if (err) {
+              r.success = false
+            }
+            else {
+              r.success = true
+              r.result = data
+              r.id = resourceName
+            }
+            res.jsonp(r);
+          })
         })
       })
-   })
 
   // group route parameter
   app.param('group', function( req, res, next, id) {

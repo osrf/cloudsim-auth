@@ -7,7 +7,6 @@ const dotenv = require('dotenv')
 // simple express server
 const express = require('express')
 const app = express()
-const router = express.Router()
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
@@ -27,7 +26,6 @@ const csgrant = require('cloudsim-grant')
 let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
-const rootResource = 'root'
 csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName, ()=>{
   console.log( dbName + ' redis database loaded')
 });
@@ -41,21 +39,19 @@ const hostIp  = child_process.execSync(
                 'curl checkip.amazonaws.com').toString().trim()
 const corsOptions = {
   origin: [
-  'https://osrf.github.io',
-  'https://cloudsim.io',
-  'https://dev.cloudsim.io',
-  'https://cloudsim.io:5000',
-  'http://localhost:8080',
-  'https://localhost:5000',
-  'https://localhost:4000',
-  'https://' + hostIp + ':5000',
-  'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
+    'https://osrf.github.io',
+    'https://cloudsim.io',
+    'https://dev.cloudsim.io',
+    'https://cloudsim.io:5000',
+    'http://localhost:8080',
+    'https://localhost:5000',
+    'https://localhost:4000',
+    'https://' + hostIp + ':5000',
+    'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
   credentials: true
 }
 
 console.log('Supported origins for today: ' + JSON.stringify(corsOptions))
-
-var localCallbackURL = 'https://localhost:' + port + '/';
 
 if (!process.env.AUTH0_CLIENT_SECRET)
   console.log('No Auth0 client secret provided!');
@@ -94,7 +90,7 @@ app.get('/token', authenticate,
       console.log('  signed ' + JSON.stringify(req.query) + ':' + token)
       res.status(200).jsonp({decoded: tokenData, success:true, token: token});
     })
-})
+  })
 
 groups.setRoutes(app)
 

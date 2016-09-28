@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "gulp",
-    "test": "gulp test"
+    "test": "./node_modules/.bin/eslint . && gulp test"
   },
   "repository": {
     "type": "mercurial",
@@ -29,6 +29,7 @@
     "morgan": "^1.7.0"
   },
   "devDependencies": {
+    "eslint": "^3.6.1",
     "gulp-coveralls": "^0.1.4",
     "gulp-istanbul": "^1.1.1",
     "gulp-mocha": "^3.0.1",

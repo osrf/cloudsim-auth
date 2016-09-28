@@ -9,7 +9,6 @@ const csgrant = require('cloudsim-grant')
 /// Module dependencies.
 const app = require('../server/server')
 
-const util = require('util');
 const should = require('should');
 const supertest = require('supertest');
 
@@ -61,20 +60,20 @@ describe('<Unit Test>', function() {
     describe('Check Non-Empty Resources for Admin', function() {
       it('should be part of admin-related groups at the beginning',
           function(done) {
-        agent
-        .get('/permissions')
-        .set('authorization', userToken)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          // admin should have 1) root permission and
-          // 2) ability to create groups
-          response.result.length.should.be.exactly(2);
-          done();
-        })
-      })
+            agent
+            .get('/permissions')
+            .set('authorization', userToken)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              // admin should have 1) root permission and
+              // 2) ability to create groups
+              response.result.length.should.be.exactly(2);
+              done();
+            })
+          })
     })
 
     const group1name = 'group1'
@@ -221,78 +220,78 @@ describe('<Unit Test>', function() {
     describe('Check Admin Permission to Access Group', function() {
       it('should be possible for admins to access group',
           function(done) {
-        agent
-        .get('/permissions/' + groupId3)
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.name.should.equal(groupId3);
-          response.result.permissions.should.not.be.empty();
-          const perm = response.result.permissions[0];
-          perm.username.should.equal(adminUsername);
-          perm.permissions.readOnly.should.equal(false);
-          done()
-        })
-      })
+            agent
+            .get('/permissions/' + groupId3)
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.name.should.equal(groupId3);
+              response.result.permissions.should.not.be.empty();
+              const perm = response.result.permissions[0];
+              perm.username.should.equal(adminUsername);
+              perm.permissions.readOnly.should.equal(false);
+              done()
+            })
+          })
     })
 
     // verify all permissions for user
     describe('Check User has no permissions', function() {
       it('should not have access to any resources',
           function(done) {
-        agent
-        .get('/permissions')
-        .set('authorization', user2Token)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.length.should.be.exactly(0);
-          done();
-        })
-      })
+            agent
+            .get('/permissions')
+            .set('authorization', user2Token)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.length.should.be.exactly(0);
+              done();
+            })
+          })
     })
 
     // verify user permission query for accessing group
     describe('Check User Permission to Access Group:', function() {
       it('should not have access to group without permission',
           function(done) {
-        agent
-        .get('/permissions/' + groupId3)
-        .set('Acccept', 'application/json')
-        .set('authorization', user2Token)
-        .end(function(err,res){
-          res.status.should.be.equal(401);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .get('/permissions/' + groupId3)
+            .set('Acccept', 'application/json')
+            .set('authorization', user2Token)
+            .end(function(err,res){
+              res.status.should.be.equal(401);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(false);
+              done();
+            })
+          })
     })
 
     // user2 has no read/write permission to any group
     describe('Check Get Group without Read Permission', function() {
       it('should not be able to see any groups',
           function(done) {
-        agent
-        .get('/groups')
-        .set('Acccept', 'application/json')
-        .set('authorization', user2Token)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.length.should.be.exactly(0);
-          done();
-        })
-      })
+            agent
+            .get('/groups')
+            .set('Acccept', 'application/json')
+            .set('authorization', user2Token)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.length.should.be.exactly(0);
+              done();
+            })
+          })
     })
 
     // give user2 read permission to groupId2
@@ -321,75 +320,75 @@ describe('<Unit Test>', function() {
     describe('Check User Permission to Access Group', function() {
       it('should have access to group with permission',
           function(done) {
-        agent
-        .get('/permissions/' + groupId2)
-        .set('authorization', user2Token)
-        .set('Acccept', 'application/json')
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.name.should.equal(groupId2);
-          response.result.permissions.should.not.be.empty();
-          response.result.permissions.length.should.equal(2);
-          // requester user permissions are at position 0
-          let puser2 = response.result.permissions[0];
-          puser2.username.should.equal(user2Username);
-          puser2.permissions.readOnly.should.equal(true);
-          let padmin = response.result.permissions[1];
-          padmin.username.should.equal(adminUsername);
-          padmin.permissions.readOnly.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .get('/permissions/' + groupId2)
+            .set('authorization', user2Token)
+            .set('Acccept', 'application/json')
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.name.should.equal(groupId2);
+              response.result.permissions.should.not.be.empty();
+              response.result.permissions.length.should.equal(2);
+              // requester user permissions are at position 0
+              let puser2 = response.result.permissions[0];
+              puser2.username.should.equal(user2Username);
+              puser2.permissions.readOnly.should.equal(true);
+              let padmin = response.result.permissions[1];
+              padmin.username.should.equal(adminUsername);
+              padmin.permissions.readOnly.should.equal(false);
+              done();
+            })
+          })
     })
 
     // user2 should be able to see groupId2
     describe('Check Get Group with Read Permission', function() {
       it('should be able to see only one group',
           function(done) {
-        agent
-        .get('/groups')
-        .set('Acccept', 'application/json')
-        .set('authorization', user2Token)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.length.should.be.exactly(1);
-          // group 2 consists of admin with write access
-          // and user with read access
-          response.result[0].name.should.equal(groupId2);
-          const group2Perm = response.result[0].permissions;
-          group2Perm.length.should.be.exactly(2);
-          group2Perm[0].username.should.equal(user2Username);
-          group2Perm[0].permissions.readOnly.should.equal(true);
-          group2Perm[1].username.should.equal(adminUsername);
-          group2Perm[1].permissions.readOnly.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .get('/groups')
+            .set('Acccept', 'application/json')
+            .set('authorization', user2Token)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.length.should.be.exactly(1);
+              // group 2 consists of admin with write access
+              // and user with read access
+              response.result[0].name.should.equal(groupId2);
+              const group2Perm = response.result[0].permissions;
+              group2Perm.length.should.be.exactly(2);
+              group2Perm[0].username.should.equal(user2Username);
+              group2Perm[0].permissions.readOnly.should.equal(true);
+              group2Perm[1].username.should.equal(adminUsername);
+              group2Perm[1].permissions.readOnly.should.equal(false);
+              done();
+            })
+          })
     })
 
 
     describe('Check Remove Group without Write Permission', function() {
       it('should not be able to remove group without write permission',
           function(done) {
-        agent
-        .delete('/groups/' + groupId2)
-        .set('Acccept', 'application/json')
-        .set('authorization', user2Token)
-        .send({})
-        .end(function(err,res){
-          res.status.should.be.equal(401);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .delete('/groups/' + groupId2)
+            .set('Acccept', 'application/json')
+            .set('authorization', user2Token)
+            .send({})
+            .end(function(err,res){
+              res.status.should.be.equal(401);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(false);
+              done();
+            })
+          })
     })
 
 
@@ -453,19 +452,19 @@ describe('<Unit Test>', function() {
     describe('Check Remove Group with Write Permission', function() {
       it('should be able to remove group with write permission',
           function(done) {
-        agent
-        .delete('/groups/' + groupId3)
-        .set('Acccept', 'application/json')
-        .set('authorization', user2Token)
-        .send({})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          done();
-        })
-      })
+            agent
+            .delete('/groups/' + groupId3)
+            .set('Acccept', 'application/json')
+            .set('authorization', user2Token)
+            .send({})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              done();
+            })
+          })
     })
 
     // verify groupId3 is removed
@@ -512,22 +511,22 @@ describe('<Unit Test>', function() {
     describe('Grant Read Permission', function() {
       it('should be possible to grant user read permission to more groups',
           function(done) {
-        agent
-        .post('/permissions')
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .send({resource: groupId4, grantee: user2Username, readOnly: true})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text)
-          response.success.should.equal(true);
-          response.resource.should.equal(groupId4);
-          response.grantee.should.equal(user2Username);
-          response.readOnly.should.equal(true);
-          done();
-        })
-      })
+            agent
+            .post('/permissions')
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .send({resource: groupId4, grantee: user2Username, readOnly: true})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text)
+              response.success.should.equal(true);
+              response.resource.should.equal(groupId4);
+              response.grantee.should.equal(user2Username);
+              response.readOnly.should.equal(true);
+              done();
+            })
+          })
     })
 
     // user2 should be able to see groupId2 and groupId4
@@ -553,22 +552,22 @@ describe('<Unit Test>', function() {
     describe('Revoke Read Permission', function() {
       it('should be possible to revoke user read permission',
           function(done) {
-        agent
-        .delete('/permissions')
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .send({resource: groupId4, grantee: user2Username, readOnly: true})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.resource.should.equal(groupId4);
-          response.grantee.should.equal(user2Username);
-          response.readOnly.should.equal(true);
-          done();
-        })
-      })
+            agent
+            .delete('/permissions')
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .send({resource: groupId4, grantee: user2Username, readOnly: true})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.resource.should.equal(groupId4);
+              response.grantee.should.equal(user2Username);
+              response.readOnly.should.equal(true);
+              done();
+            })
+          })
     })
 
     // user2 should be able to see groupId2 but not groupId4
@@ -593,49 +592,49 @@ describe('<Unit Test>', function() {
     describe('Update Read to Write Permission', function() {
       it('should be possible to update user from read to write permission',
           function(done) {
-        agent
-        .post('/permissions')
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .send({resource: groupId2, grantee: user2Username, readOnly: false})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.resource.should.equal(groupId2);
-          response.grantee.should.equal(user2Username);
-          response.readOnly.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .post('/permissions')
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .send({resource: groupId2, grantee: user2Username, readOnly: false})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.resource.should.equal(groupId2);
+              response.grantee.should.equal(user2Username);
+              response.readOnly.should.equal(false);
+              done();
+            })
+          })
     })
 
     // verify permission query for accessing group
     describe('Verify Update User Write Permission', function() {
       it('should be able to see write permission in user permission list',
           function(done) {
-        agent
-        .get('/permissions/' + groupId2)
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(true);
-          response.result.name.should.equal(groupId2);
-          response.result.permissions.should.not.be.empty();
-          response.result.permissions.length.should.be.exactly(2);
-          const perm1 = response.result.permissions[0];
-          perm1.username.should.equal(adminUsername);
-          perm1.permissions.readOnly.should.equal(false);
-          const perm2 = response.result.permissions[1];
-          perm2.username.should.equal(user2Username);
-          perm2.permissions.readOnly.should.equal(false);
-          done()
-        })
-      })
+            agent
+            .get('/permissions/' + groupId2)
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(true);
+              response.result.name.should.equal(groupId2);
+              response.result.permissions.should.not.be.empty();
+              response.result.permissions.length.should.be.exactly(2);
+              const perm1 = response.result.permissions[0];
+              perm1.username.should.equal(adminUsername);
+              perm1.permissions.readOnly.should.equal(false);
+              const perm2 = response.result.permissions[1];
+              perm2.username.should.equal(user2Username);
+              perm2.permissions.readOnly.should.equal(false);
+              done()
+            })
+          })
     })
 
     // verify user2's write permission to groupId2 cannot be revoked
@@ -643,19 +642,19 @@ describe('<Unit Test>', function() {
     describe('Revoke Write Permission with ReadOnly flag', function() {
       it('should not be possible to revoke user write permission with read',
           function(done) {
-        agent
-        .delete('/permissions')
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .send({resource: groupId2, grantee: user2Username, readOnly: true})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text);
-          response.success.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .delete('/permissions')
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .send({resource: groupId2, grantee: user2Username, readOnly: true})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text);
+              response.success.should.equal(false);
+              done();
+            })
+          })
     })
 
     // revoke user2's write permission to groupId2
@@ -696,23 +695,23 @@ describe('<Unit Test>', function() {
     describe('Grant Permission to Create Groups', function() {
       it('should be possible to grant user permission to create groups',
           function(done) {
-        agent
-        .post('/permissions')
-        .set('Acccept', 'application/json')
-        .set('authorization', userToken)
-        .send({resource: groupResource, grantee: user2Username,
-            readOnly: false})
-        .end(function(err,res){
-          res.status.should.be.equal(200);
-          res.redirect.should.equal(false);
-          const response = JSON.parse(res.text)
-          response.success.should.equal(true);
-          response.resource.should.equal(groupResource);
-          response.grantee.should.equal(user2Username);
-          response.readOnly.should.equal(false);
-          done();
-        })
-      })
+            agent
+            .post('/permissions')
+            .set('Acccept', 'application/json')
+            .set('authorization', userToken)
+            .send({resource: groupResource, grantee: user2Username,
+                readOnly: false})
+            .end(function(err,res){
+              res.status.should.be.equal(200);
+              res.redirect.should.equal(false);
+              const response = JSON.parse(res.text)
+              response.success.should.equal(true);
+              response.resource.should.equal(groupResource);
+              response.grantee.should.equal(user2Username);
+              response.readOnly.should.equal(false);
+              done();
+            })
+          })
     })
 
     // verify user2 will be able to create a group

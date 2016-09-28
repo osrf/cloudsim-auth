@@ -52,6 +52,12 @@ function setRoutes(app) {
       csgrant.ownsResource('group', false),
       function (req, res) {
         const groupName = req.body.resource
+
+        if (groupName.indexOf('@') >= 0) {
+          res.jsonp({success: false, error: 'Invalid character in group name'})
+          return
+        }
+
         csgrant.getNextResourceId('group', (err, resourceName) => {
         if(err) {
 

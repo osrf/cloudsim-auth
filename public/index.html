@@ -56,11 +56,42 @@
         swagger: "2.0",
         tags: [
           {
+            "name": "token",
+            "description": "Hand out authentication tokens",
+          },
+          {
             "name": "groups",
             "description": "Managing groups of users",
           },
         ],
         paths: {
+          // /token
+          "\/token": {
+            // GET
+            "get": {
+              "tags": [
+                "token"
+              ],
+              "summary": "Exchange an auth0 token for a cloudsim-auth token",
+              "consumes": [
+                "application\/json",
+              ],
+              "produces": [
+                "application\/json"
+              ],
+              "parameters": [],
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              },
+              "security": [
+                {
+                  "auth0": [],
+                }
+              ]
+            },
+          },
           // /groups
           "\/groups": {
             // GET
@@ -163,7 +194,14 @@
           "token": {
             "type": "apiKey",
             "name": "authorization",
-            "in": "header"
+            "in": "header",
+            "description": "Cloudsim-auth token"
+          },
+          "auth0": {
+            "type": "apiKey",
+            "name": "authorization",
+            "in": "header",
+            "description": "Auth0 token. Note: It must start with 'Bearer '"
           }
         }
       }

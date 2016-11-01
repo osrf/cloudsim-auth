@@ -60,8 +60,12 @@
             "description": "Hand out authentication tokens",
           },
           {
+            "name": "permissions",
+            "description": "Manage user access to resources",
+          },
+          {
             "name": "groups",
-            "description": "Managing groups of users",
+            "description": "Manage groups of users",
           },
         ],
         paths: {
@@ -88,6 +92,136 @@
               "security": [
                 {
                   "auth0": [],
+                }
+              ]
+            },
+          },
+          // /permissions
+          "\/permissions": {
+            // GET
+            "get": {
+              "tags": [
+                "permissions"
+              ],
+              "summary": "Get all permissions for a user",
+              "consumes": [
+                "application\/json",
+              ],
+              "produces": [
+                "application\/json"
+              ],
+              "parameters": [],
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              },
+              "security": [
+                {
+                  "token": [],
+                }
+              ]
+            },
+            // POST
+            "post": {
+              "tags": [
+                "permissions"
+              ],
+              "summary": "Grant a user permission to a resource",
+              "consumes": [
+                "application\/json",
+              ],
+              "produces": [
+                "application\/json"
+              ],
+              "parameters": [
+                {
+                  "in": "body",
+                  "name": "body",
+                  "description": "Object with grant information",
+                  "required": true,
+                  "schema": {
+                    "$ref": "#\/definitions\/Permissions"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              },
+              "security": [
+                {
+                  "token": [],
+                }
+              ]
+            },
+            // DELETE
+            "delete": {
+              "tags": [
+                "permissions"
+              ],
+              "summary": "Revoke a user permission from a resource",
+              "consumes": [
+                "application\/json",
+              ],
+              "produces": [
+                "application\/json"
+              ],
+              "parameters": [
+                {
+                  "in": "body",
+                  "name": "body",
+                  "description": "Object with revoke information",
+                  "required": true,
+                  "schema": {
+                    "$ref": "#\/definitions\/Permissions"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              },
+              "security": [
+                {
+                  "token": [],
+                }
+              ]
+            },
+          },
+          // /permissions/{resourceId}
+          "\/permissions\/{resourceId}": {
+            // GET
+            "get": {
+              "tags": [
+                "permissions"
+              ],
+              "summary": "Get permissions for a resource",
+              "consumes": [
+                "application\/json",
+              ],
+              "produces": [
+                "application\/json"
+              ],
+              "parameters": [
+                {
+                  "name": "resourceId",
+                  "in": "path",
+                  "description": "Id of resource",
+                  "required": true,
+                  "type": "string",
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Success"
+                }
+              },
+              "security": [
+                {
+                  "token": [],
                 }
               ]
             },
@@ -132,11 +266,14 @@
               ],
               "parameters": [
                 {
-                  "in": "resource",
-                  "name": "resource",
-                  "description": "Group name",
+                  "in": "body",
+                  "name": "body",
+                  "description": "Object for group creation",
                   "required": true,
                   "type": "string",
+                  "schema": {
+                    "$ref": "#\/definitions\/Resource"
+                  }
                 }
               ],
               "responses": {
@@ -151,8 +288,8 @@
               ]
             },
           },
-          // /group/{groupId}
-          "\/group\/{groupId}": {
+          // /groups/{groupId}
+          "\/groups\/{groupId}": {
             // DELETE
             "delete": {
               "tags": [
@@ -187,7 +324,30 @@
             },
           },
         },
-        definitions: { },
+        definitions: {
+          "Resource": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+              },
+            },
+          },
+          "Permissions": {
+            "type": "object",
+            "properties": {
+              "resource": {
+                "type": "string",
+              },
+              "grantee": {
+                "type": "string",
+              },
+              "readOnly": {
+                "type": "boolean",
+              },
+            },
+          },
+        },
         responses: { },
         parameters: { },
         securityDefinitions: {

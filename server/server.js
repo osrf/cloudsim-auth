@@ -148,7 +148,6 @@ app.param('resourceId', function(req, res, next, id) {
   next()
 })
 
-
 // Expose app
 exports = module.exports = app;
 

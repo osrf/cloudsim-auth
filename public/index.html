@@ -87,6 +87,9 @@
               "responses": {
                 "200": {
                   "description": "Success"
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -113,7 +116,30 @@
               "parameters": [],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                      },
+                      "operation": {
+                        "type": "string",
+                      },
+                      "requester": {
+                        "type": "string",
+                      },
+                      "result": {
+                        "type" : "array",
+                        "items": {
+                          "$ref": "#\/definitions\/Resource"
+                        },
+                      },
+                    },
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -141,13 +167,19 @@
                   "description": "Object with grant information",
                   "required": true,
                   "schema": {
-                    "$ref": "#\/definitions\/Permissions"
+                    "$ref": "#\/definitions\/PermissionsRequest"
                   }
                 }
               ],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "$ref": "#\/definitions\/PermissionsResponse"
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -175,13 +207,22 @@
                   "description": "Object with revoke information",
                   "required": true,
                   "schema": {
-                    "$ref": "#\/definitions\/Permissions"
+                    "$ref": "#\/definitions\/PermissionsRequest"
                   }
                 }
               ],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "$ref": "#\/definitions\/PermissionsResponse"
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
+                },
+                "500": {
+                  "description": "Internal error"
                 }
               },
               "security": [
@@ -216,7 +257,30 @@
               ],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                      },
+                      "operation": {
+                        "type": "string",
+                      },
+                      "requester": {
+                        "type": "string",
+                      },
+                      "resource": {
+                        "type": "string",
+                      },
+                      "result": {
+                        "$ref": "#\/definitions\/Resource"
+                      },
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -243,7 +307,30 @@
               "parameters": [],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                      },
+                      "operation": {
+                        "type": "string",
+                      },
+                      "requester": {
+                        "type": "string",
+                      },
+                      "result": {
+                        "type" : "array",
+                        "items": {
+                          "$ref": "#\/definitions\/Resource"
+                        },
+                      },
+                    },
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -272,13 +359,24 @@
                   "required": true,
                   "type": "string",
                   "schema": {
-                    "$ref": "#\/definitions\/Resource"
+                    "$ref": "#\/definitions\/ResourceName"
                   }
                 }
               ],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "type": "object",
+                    "properties" : {
+                      "TODO: change API to be like other routes": {
+                        "type": "string",
+                      },
+                    },
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -313,7 +411,29 @@
               ],
               "responses": {
                 "200": {
-                  "description": "Success"
+                  "description": "Success",
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                      },
+/*
+                      "operation": {
+                        "type": "string",
+                      },
+                      "requester": {
+                        "type": "string",
+                      },
+*/
+                      "resource": {
+                        "$ref": "#\/definitions\/Resource"
+                      },
+                    },
+                  },
+                },
+                "401": {
+                  "description": "Not authorized"
                 }
               },
               "security": [
@@ -325,7 +445,7 @@
           },
         },
         definitions: {
-          "Resource": {
+          "ResourceName": {
             "type": "object",
             "properties": {
               "resource": {
@@ -333,7 +453,40 @@
               },
             },
           },
+          "Resource": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+              },
+              "data": {
+                "type": "object",
+              },
+              "permissions": {
+                "$ref": "#\/definitions\/Permissions"
+              },
+            },
+          },
           "Permissions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                },
+                "permissions": {
+                  "type": "object",
+                  "properties": {
+                    "readOnly": {
+                      "type": "boolean",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "PermissionsRequest": {
             "type": "object",
             "properties": {
               "resource": {
@@ -344,6 +497,32 @@
               },
               "readOnly": {
                 "type": "boolean",
+              },
+            },
+          },
+          "PermissionsResponse": {
+            "type": "object",
+            "properties": {
+              "success": {
+                "type": "boolean",
+              },
+              "operation": {
+                "type": "string",
+              },
+              "requester": {
+                "type": "string",
+              },
+              "grantee": {
+                "type": "string",
+              },
+              "resource": {
+                "type": "string",
+              },
+              "readOnly": {
+                "type": "boolean",
+              },
+              "msg": {
+                "type": "string",
               },
             },
           },
@@ -363,7 +542,7 @@
             "in": "header",
             "description": "Auth0 token. Note: It must start with 'Bearer '"
           }
-        }
+        },
       }
 
       // Pre load translate...
@@ -394,10 +573,10 @@
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
         },
-        docExpansion: "none",
-        jsonEditor: false,
+        docExpansion: "list",
+        jsonEditor: true,
         defaultModelRendering: 'schema',
-        showRequestHeaders: false
+        showRequestHeaders: true
       });
 
       window.swaggerUi.load();

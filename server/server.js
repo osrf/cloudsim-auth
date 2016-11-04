@@ -12,7 +12,7 @@ const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
 const child_process = require('child_process')
 
-//
+// cloudsim
 const groups = require('./groups')
 
 dotenv.load()
@@ -28,10 +28,6 @@ const csgrant = require('cloudsim-grant')
 let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
-csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName,
-  process.env.CLOUDSIM_AUTH_DB, ()=>{
-    console.log( dbName + ' redis database loaded')
-  });
 
 
 const port = process.env.PORT || 4000
@@ -181,4 +177,17 @@ if(useHttps) {
 else {
   httpServer = require('http').Server(app)
 }
-httpServer.listen(port)
+
+const resources = {'root': {}, 'group':{} }
+csgrant.init(adminUser,
+  resources,
+  dbName,
+  process.env.CLOUDSIM_AUTH_DB,
+  httpServer,
+  ()=>{
+    console.log( dbName + ' redis database loaded')
+    httpServer.listen(port)
+  })
+
+
+

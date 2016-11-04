@@ -109,40 +109,9 @@ app.get('/token',
 
         })
 
+// setup the /permissions routes
+csgrant.setPermissionsRoutes(app)
 groups.setRoutes(app)
-
-// grant user permission to a resource
-// (add user to a group)
-app.post('/permissions',
-    csgrant.authenticate,
-    csgrant.grant)
-
-// revoke user permission
-// (delete user from a group)
-app.delete('/permissions',
-    csgrant.authenticate,
-    csgrant.revoke)
-
-// get all permissions for a user
-app.get('/permissions',
-    csgrant.authenticate,
-    csgrant.userResources,
-    csgrant.allResources
-)
-
-// get user permissions for a resource
-// (get users in a group)
-app.get('/permissions/:resourceId',
-    csgrant.authenticate,
-    csgrant.ownsResource(':resourceId', true),
-    csgrant.resource
-)
-
-/// param for resource name
-app.param('resourceId', function(req, res, next, id) {
-  req.resourceId = id
-  next()
-})
 
 // Expose app
 exports = module.exports = app;

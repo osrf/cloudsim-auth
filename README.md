@@ -56,4 +56,3 @@ AUTH0_CLIENT_SECRET
 ### Who do I talk to? ###
 
 * Repo owner or admin: hugo@osrfoundation.org
-

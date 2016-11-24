@@ -8,7 +8,7 @@
 
 # README #
 
-This is the authoring server for Cloudsim and other web apps
+This is the authentication server for Cloudsim and other web apps
 
 ### What is this repository for? ###
 

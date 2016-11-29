@@ -728,7 +728,7 @@ describe('<Unit Test>', function() {
             .set('Acccept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupResource, grantee: user2Username,
-                readOnly: false})
+              readOnly: false})
             .end(function(err,res){
               res.status.should.be.equal(200);
               res.redirect.should.equal(false);

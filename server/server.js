@@ -147,9 +147,34 @@ else {
   httpServer = require('http').Server(app)
 }
 
-const resources = {'root': {}, 'group':{} }
-csgrant.init(adminUser,
-  resources,
+const resources = [
+  {
+    name: 'root',
+    data : {},
+    permissions: [
+      {
+        username: adminUser,
+        permissions: {
+          readOnly: false
+        }
+      }
+    ]
+  },
+  {
+    name: 'group',
+    data:{},
+    permissions: [
+      {
+        username: adminUser,
+        permissions: {
+          readOnly: false
+        }
+      }
+    ]
+  }
+]
+
+csgrant.init(resources,
   dbName,
   process.env.CLOUDSIM_AUTH_DB,
   httpServer,

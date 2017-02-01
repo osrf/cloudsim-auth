@@ -1,8 +1,8 @@
 {
   "name": "cloudsim-auth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Basic auth server for Cloudsim authentication",
-  "main": "app.js",
+  "main": "server/cloudsim_auth.js",
   "scripts": {
     "start": "gulp",
     "test": "./node_modules/.bin/eslint . && gulp test"

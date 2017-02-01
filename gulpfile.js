@@ -17,7 +17,7 @@ gulp.task('nodemon', function (cb) {
   var started = false;
 
   return nodemon({
-    script: 'server/server.js',
+    script: 'server/cloudsim_auth.js',
     watch: ['server/**/*.*']
   }).on('start', function () {
     console.log('start nodemon')

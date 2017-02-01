@@ -1,3 +1,5 @@
+Cloudsim-auth is part of the [Cloudsim](https://bitbucket.org/osrf/cloudsim) project.
+
 [ ![Codeship Status for osrf/cloudsim-auth](https://codeship.com/projects/d48e5670-0c06-0134-283f-368b7d3cc702/status?branch=default)](https://codeship.com/projects/156010)
 
 [![Dependency Status](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57ca2dec939fc60037ebcff7)

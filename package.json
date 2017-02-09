@@ -4,8 +4,10 @@
   "description": "Basic auth server for Cloudsim authentication",
   "main": "server/cloudsim_auth.js",
   "scripts": {
-    "start": "gulp",
-    "test": "./node_modules/.bin/eslint . && gulp test"
+    "start": "node server/cloudsim_auth.js",
+    "test": "./node_modules/.bin/eslint . && export NODE_ENV=test; istanbul cover --print both _mocha -- -u exports -R spec",
+    "dev": "node ./node_modules/nodemon/bin/nodemon.js",
+    "coveralls": "./node_modules/.bin/eslint . && export NODE_ENV=test; istanbul cover _mocha -- -u exports -R spec && istanbul-coveralls"
   },
   "repository": {
     "type": "mercurial",
@@ -22,17 +24,16 @@
     "cloudsim-grant": "^0.4.6",
     "cors": "^2.7.1",
     "dotenv": "^2.0.0",
+    "eslint": "^3.15.0",
     "express": "^4.8.2",
     "express-jwt": "^5.0.0",
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.1.0",
-    "morgan": "^1.7.0"
+    "istanbul": "^0.4.5",
+    "morgan": "^1.7.0",
+    "supertest": "^2.0.1"
   },
   "devDependencies": {
-    "eslint": "^3.6.1",
-    "gulp-coveralls": "^0.1.4",
-    "gulp-istanbul": "^1.1.1",
-    "gulp-mocha": "^3.0.1",
     "jsonwebtoken": "^7.1.9",
     "mocha": "^3.0.2",
     "should": "^11.1.0",

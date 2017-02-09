@@ -211,6 +211,7 @@ csgrant.init(resources,
   httpServer,
   ()=>{
     console.log( dbName + ' redis database loaded')
+    console.log('listening on port ' + port)
     httpServer.listen(port)
   })
 

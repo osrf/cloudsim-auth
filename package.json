@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "gulp",
-    "test": "./node_modules/.bin/eslint . && gulp test"
+    "test": "./node_modules/.bin/eslint . && gulp test",
+    "coveralls": "gulp coveralls"
   },
   "repository": {
     "type": "mercurial",

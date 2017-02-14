@@ -30,6 +30,7 @@
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.1.0",
     "istanbul": "^0.4.5",
+    "istanbul-coveralls": "^1.0.3",
     "morgan": "^1.7.0",
     "supertest": "^2.0.1"
   },

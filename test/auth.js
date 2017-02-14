@@ -2,7 +2,7 @@
 
 const csgrant = require('cloudsim-grant')
 const supertest = require('supertest');
-const app = require('../server/server')
+const app = require('../server/cloudsim_auth')
 const jwt = require('jsonwebtoken');
 
 let agent;

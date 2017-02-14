@@ -2,12 +2,11 @@
 
 console.log('test/group.js');
 
-require('../server/server.js')
 
 const csgrant = require('cloudsim-grant')
 
 /// Module dependencies.
-const app = require('../server/server')
+const app = require('../server/cloudsim_auth')
 
 const should = require('should');
 const supertest = require('supertest');

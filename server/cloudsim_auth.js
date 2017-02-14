@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const path = require('path')
 const cors = require('cors')
 const dotenv = require('dotenv')
 
@@ -19,7 +20,8 @@ dotenv.load()
 
 // csgrant
 let dbName = 'cloudsim-auth'
-process.env.CLOUDSIM_AUTH_DB = process.env.CLOUDSIM_AUTH_DB || 'localhost'
+const dbUrl = process.env.CLOUDSIM_AUTH_DB || 'localhost'
+
 
 if (process.env.NODE_ENV === 'test'){
   dbName = dbName + '-test'
@@ -44,8 +46,7 @@ const corsOptions = {
     'http://localhost:8080',
     'https://localhost:5000',
     'https://localhost:4000',
-    'https://' + hostIp + ':5000',
-    'https://cloudsimwidgets-env.us-east-1.elasticbeanstalk.com:5000'],
+    'https://' + hostIp + ':5000'],
   credentials: true
 }
 
@@ -66,48 +67,44 @@ app.use(cors(corsOptions))
 app.use(bodyParser.json())
 
 app.use(morgan('combined'))
-app.use(express.static('public'));
 
-app.get('/', function(req, res) {
-  res.sendfile('./public/index.html');
-})
+// this serves the swagger pages under /api
+app.use("/api", express.static(path.join(__dirname, '/../public')))
 
-app.get('/token',
-        authenticate,
-        function (req, res, next) {
-          req.user = req.query.username
-          req.identities = [req.user]
-          next()
-        },
-        csgrant.userResources,
-        function (req ,res) {
+app.get('/token', authenticate,
+  function (req, res, next) {
+    req.user = req.query.username
+    req.identities = [req.user]
+    next()
+  },
+  csgrant.userResources,
+  function (req ,res) {
 
-          let userResources = req.userResources.filter( (obj)=>{
-            if(obj.name.indexOf('group-') == 0)
-              return true
-            return false
-          })
+    let userResources = req.userResources.filter( (obj)=>{
+      if(obj.name.indexOf('group-') == 0)
+        return true
+      return false
+    })
 
-          let groups = []
-          for (let i = 0; i < userResources.length; ++i) {
-            groups.push(userResources[i].data.name)
-          }
+    let groups = []
+    for (let i = 0; i < userResources.length; ++i) {
+      groups.push(userResources[i].data.name)
+    }
 
-          console.log('get a token')
-          console.log('  user: ' + req.user)
-          console.log('  query: ' + JSON.stringify(req.query))
+    console.log('get a token')
+    console.log('  user: ' + req.user)
+    console.log('  query: ' + JSON.stringify(req.query))
 
-          let identities = [req.user]
-          identities = identities.concat(groups)
-          let tokenData = {identities: identities}
+    let identities = [req.user]
+    identities = identities.concat(groups)
+    let tokenData = {identities: identities}
 
-          csgrant.signToken(tokenData, (err, token) =>{
-            console.log('  signed ' + token)
-            res.status(200).jsonp(
-                {decoded: tokenData, success:true, token: token})
-          })
-
-        })
+    csgrant.signToken(tokenData, (err, token) =>{
+      console.log('  signed ' + token)
+      res.status(200).jsonp(
+          {decoded: tokenData, success:true, token: token})
+    })
+  })
 
 // setup the /permissions routes
 csgrant.setPermissionsRoutes(app)
@@ -116,20 +113,54 @@ groups.setRoutes(app)
 // Expose app
 exports = module.exports = app;
 
+
+function details() {
+  const date = new Date()
+  const version = require('../package.json').version
+  const csgrantVersion = require('cloudsim-grant/package.json').version
+  const env = app.get('env')
+  const origins = JSON.stringify(corsOptions, null, 2)
+  const s = `
+date: ${date}
+cloudsim-auth version: ${version}
+cloudsim-grant version: ${csgrantVersion}
+port: ${port}
+admin user: ${adminUser}
+environment: ${env}
+redis database name: ${dbName}
+redis database url: ${dbUrl}
+supported origins: ${origins}
+`
+  return s
+}
+
 console.log('\n\n')
 console.log('============================================')
-console.log('cloudsim-auth version: ', require('../package.json').version)
-console.log('server: ', __filename)
-console.log('serving from: ', __dirname)
-console.log('port: ' + port)
-console.log('cloudsim-grant version: ', require('cloudsim-grant/package.json').version)
-console.log('admin user: ' + adminUser)
-console.log('environment: ' + process.env.NODE_ENV)
-console.log('redis database name: ' + dbName)
-console.log('redis database url: ' + process.env.CLOUDSIM_AUTH_DB)
-console.log('Supported origins for today: ' + JSON.stringify(corsOptions, null, 2))
+console.log(details())
 console.log('============================================')
 console.log('\n\n')
+
+
+app.get('/', function (req, res) {
+  const info = details()
+  const repo = require('../package.json').repository.url
+  const s = `
+<html>
+  <body>
+    <img src="api/images/cloudsim.svg" style="height: 2em"/>
+    <h1>Cloudsim-auth server</h1>
+    <div>Authentication server is running</div>
+    <pre>
+    ${info}
+    </pre>
+    <a href="/api">API documentation</a>
+    <br>
+    <a href="${repo}">source code repository</a>
+  </body>
+</html>
+`
+  res.end(s)
+})
 
 
 // ssl and https
@@ -176,10 +207,11 @@ const resources = [
 
 csgrant.init(resources,
   dbName,
-  process.env.CLOUDSIM_AUTH_DB,
+  dbUrl,
   httpServer,
   ()=>{
     console.log( dbName + ' redis database loaded')
+    console.log('listening on port ' + port)
     httpServer.listen(port)
   })
 

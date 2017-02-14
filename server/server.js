@@ -12,7 +12,7 @@ const bodyParser = require('body-parser')
 const jwt = require('express-jwt')
 const child_process = require('child_process')
 
-//
+// cloudsim
 const groups = require('./groups')
 
 dotenv.load()
@@ -28,10 +28,6 @@ const csgrant = require('cloudsim-grant')
 let adminUser = 'admin'
 if (process.env.CLOUDSIM_ADMIN)
   adminUser = process.env.CLOUDSIM_ADMIN;
-csgrant.init(adminUser, {'root': {}, 'group':{} }, dbName,
-  process.env.CLOUDSIM_AUTH_DB, ()=>{
-    console.log( dbName + ' redis database loaded')
-  });
 
 
 const port = process.env.PORT || 4000
@@ -113,40 +109,9 @@ app.get('/token',
 
         })
 
+// setup the /permissions routes
+csgrant.setPermissionsRoutes(app)
 groups.setRoutes(app)
-
-// grant user permission to a resource
-// (add user to a group)
-app.post('/permissions',
-    csgrant.authenticate,
-    csgrant.grant)
-
-// revoke user permission
-// (delete user from a group)
-app.delete('/permissions',
-    csgrant.authenticate,
-    csgrant.revoke)
-
-// get all permissions for a user
-app.get('/permissions',
-    csgrant.authenticate,
-    csgrant.userResources,
-    csgrant.allResources
-)
-
-// get user permissions for a resource
-// (get users in a group)
-app.get('/permissions/:resourceId',
-    csgrant.authenticate,
-    csgrant.ownsResource(':resourceId', true),
-    csgrant.resource
-)
-
-/// param for resource name
-app.param('resourceId', function(req, res, next, id) {
-  req.resourceId = id
-  next()
-})
 
 // Expose app
 exports = module.exports = app;
@@ -181,4 +146,42 @@ if(useHttps) {
 else {
   httpServer = require('http').Server(app)
 }
-httpServer.listen(port)
+
+const resources = [
+  {
+    name: 'root',
+    data : {},
+    permissions: [
+      {
+        username: adminUser,
+        permissions: {
+          readOnly: false
+        }
+      }
+    ]
+  },
+  {
+    name: 'group',
+    data:{},
+    permissions: [
+      {
+        username: adminUser,
+        permissions: {
+          readOnly: false
+        }
+      }
+    ]
+  }
+]
+
+csgrant.init(resources,
+  dbName,
+  process.env.CLOUDSIM_AUTH_DB,
+  httpServer,
+  ()=>{
+    console.log( dbName + ' redis database loaded')
+    httpServer.listen(port)
+  })
+
+
+

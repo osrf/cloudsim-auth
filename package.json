@@ -23,21 +23,19 @@
     "body-parser": "^1.15.0",
     "cloudsim-grant": "^0.4.6",
     "cors": "^2.7.1",
-    "dotenv": "^2.0.0",
-    "eslint": "^3.15.0",
+    "dotenv": "^4.0.0",
     "express": "^4.8.2",
-    "express-jwt": "^5.0.0",
-    "gulp": "^3.9.1",
-    "gulp-nodemon": "^2.1.0",
-    "istanbul": "^0.4.5",
-    "istanbul-coveralls": "^1.0.3",
+    "express-jwt": "^5.1.0",
     "morgan": "^1.7.0",
-    "supertest": "^2.0.1"
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
+    "eslint": "^3.15.0",
+    "istanbul": "^0.4.5",
+    "istanbul-coveralls": "^1.0.3",
     "jsonwebtoken": "^7.1.9",
     "mocha": "^3.0.2",
-    "should": "^11.1.0",
-    "supertest": "^2.0.0"
+    "nodemon": "^1.11.0",
+    "should": "^11.1.0"
   }
 }

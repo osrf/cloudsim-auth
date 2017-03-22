@@ -44,6 +44,8 @@ const corsOptions = {
     'https://dev.cloudsim.io',
     'https://cloudsim.io:5000',
     'http://localhost:8080',
+    'http://localhost:5000',
+    'http://localhost:4000',
     'https://localhost:5000',
     'https://localhost:4000',
     'https://' + hostIp + ':5000'],

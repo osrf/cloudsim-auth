@@ -70,6 +70,18 @@ app.use(bodyParser.json())
 
 app.use(morgan('combined'))
 
+// Redirect to HTTPS
+app.use(function (req, res, next) {
+    // Insecure request?
+    /* istanbul ignore if */
+  if (req.get('x-forwarded-proto') == 'http') {
+        // Redirect to https://
+    return res.redirect('https://' + req.get('host') + req.url);
+  }
+
+  next();
+});
+
 // this serves the swagger pages under /api
 app.use("/api", express.static(path.join(__dirname, '/../public')))
 

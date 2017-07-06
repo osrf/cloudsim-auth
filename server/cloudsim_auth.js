@@ -87,7 +87,7 @@ app.use("/api", express.static(path.join(__dirname, '/../public')))
 
 app.get('/token', authenticate,
   function (req, res, next) {
-    req.user = req.query.username
+    req.user = req.user.email
     req.identities = [req.user]
     next()
   },

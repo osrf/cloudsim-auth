@@ -83,7 +83,7 @@ describe('<Unit Test>', function() {
         const data = {resource: group1name};
         agent
         .post('/groups')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send(data)
         .end(function(err,res){
@@ -149,7 +149,7 @@ describe('<Unit Test>', function() {
         const data = {resource: 'group2'};
         agent
         .post('/groups')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send(data)
         .end(function(err,res){
@@ -189,7 +189,7 @@ describe('<Unit Test>', function() {
         agent
         .delete('/groups/' + groupId1)
         .send({})
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .end(function(err,res){
           res.status.should.be.equal(200);
@@ -226,7 +226,7 @@ describe('<Unit Test>', function() {
         const data = {resource: 'group3'};
         agent
         .post('/groups')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send(data)
         .end(function(err,res){
@@ -248,7 +248,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .get('/permissions/' + groupId3)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .end(function(err,res){
               res.status.should.be.equal(200);
@@ -289,7 +289,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .get('/permissions/' + groupId3)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', user2Token)
             .end(function(err,res){
               res.status.should.be.equal(401);
@@ -307,7 +307,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .get('/groups')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', user2Token)
             .end(function(err,res){
               res.status.should.be.equal(200);
@@ -325,7 +325,7 @@ describe('<Unit Test>', function() {
       it('should be possible to grant user read permission', function(done) {
         agent
         .post('/permissions')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send({resource: groupId2, grantee: user2Username, readOnly: true})
         .end(function(err,res){
@@ -349,7 +349,7 @@ describe('<Unit Test>', function() {
             agent
             .get('/permissions/' + groupId2)
             .set('authorization', user2Token)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .end(function(err,res){
               res.status.should.be.equal(200);
               res.redirect.should.equal(false);
@@ -376,7 +376,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .get('/groups')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', user2Token)
             .end(function(err,res){
               res.status.should.be.equal(200);
@@ -404,7 +404,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .delete('/groups/' + groupId2)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', user2Token)
             .send({})
             .end(function(err,res){
@@ -423,7 +423,7 @@ describe('<Unit Test>', function() {
       it('should be possible to grant user write permission', function(done) {
         agent
         .post('/permissions')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send({resource: groupId3, grantee: user2Username, readOnly: false})
         .end(function(err,res){
@@ -480,7 +480,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .delete('/groups/' + groupId3)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', user2Token)
             .send({})
             .end(function(err,res){
@@ -517,7 +517,7 @@ describe('<Unit Test>', function() {
         const data = {resource: 'group4'};
         agent
         .post('/groups')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send(data)
         .end(function(err,res){
@@ -539,7 +539,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .post('/permissions')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupId4, grantee: user2Username, readOnly: true})
             .end(function(err,res){
@@ -580,7 +580,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .delete('/permissions')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupId4, grantee: user2Username, readOnly: true})
             .end(function(err,res){
@@ -620,7 +620,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .post('/permissions')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupId2, grantee: user2Username, readOnly: false})
             .end(function(err,res){
@@ -642,7 +642,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .get('/permissions/' + groupId2)
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .end(function(err,res){
               res.status.should.be.equal(200);
@@ -670,7 +670,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .delete('/permissions')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupId2, grantee: user2Username, readOnly: true})
             .end(function(err,res){
@@ -688,7 +688,7 @@ describe('<Unit Test>', function() {
       it('should be able to revoke write permission', function(done) {
         agent
         .delete('/permissions')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', userToken)
         .send({resource: groupId2, grantee: user2Username, readOnly: false})
         .end(function(err,res){
@@ -723,7 +723,7 @@ describe('<Unit Test>', function() {
           function(done) {
             agent
             .post('/permissions')
-            .set('Acccept', 'application/json')
+            .set('Accept', 'application/json')
             .set('authorization', userToken)
             .send({resource: groupResource, grantee: user2Username,
               readOnly: false})
@@ -748,7 +748,7 @@ describe('<Unit Test>', function() {
         const data = {resource: group5name};
         agent
         .post('/groups')
-        .set('Acccept', 'application/json')
+        .set('Accept', 'application/json')
         .set('authorization', user2Token)
         .send(data)
         .end(function(err,res){

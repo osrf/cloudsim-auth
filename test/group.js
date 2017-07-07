@@ -118,13 +118,12 @@ describe('<Unit Test>', function() {
 
     describe('Check Token Identities Data for Group', function() {
       it('should be able to see the group name in the user token', (done) => {
-        const payload = {aud: process.env.AUTH0_CLIENT_ID}
+        const payload = {email: adminUsername, aud: process.env.AUTH0_CLIENT_ID}
         const auth0Token = jwt.sign(payload,
             new Buffer(process.env.AUTH0_CLIENT_SECRET, 'base64'))
         agent
         .get('/token')
-        .set('Acccept', 'application/json')
-        .query({username: adminUsername})
+        .set('Accept', 'application/json')
         .set('authorization', 'Bearer ' + auth0Token)
         .end(function(err,res){
           res.status.should.be.equal(200);
